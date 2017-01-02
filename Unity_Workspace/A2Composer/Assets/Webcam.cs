@@ -19,7 +19,7 @@ public class Webcam : MonoBehaviour {
         leftCam.deviceName = devices[1].name;
         //rawImage.texture = leftCam;
         //rawImage.material.mainTexture = leftCam;
-        rend.material.mainTexture = leftCam;
+        rend.materials[0].mainTexture = leftCam;
 
         leftCam.Play();
 
