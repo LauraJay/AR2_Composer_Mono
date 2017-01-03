@@ -10,7 +10,6 @@ public class TableCalibration : MonoBehaviour
     private int markerCounter;
     public Vector3[] positions;
     public bool[] setPositions;
-
     public setupScene setupScene;
     public float planeZOffset;
 
