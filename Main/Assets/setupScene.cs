@@ -67,6 +67,26 @@ public class setupScene : MonoBehaviour
         markerArraySet = state;
     }
 
+    //// Returns the position on the plane for the tracked (normalized) marker position
+    //private Vector3 getCalibratedMarkerPos(Vector3 position)
+    //{
+    //    // Linear interpolation of X
+    //    float xMin = tablePositions[1].x;
+    //    float xMax = tablePositions[0].x;
+    //    float newX = xMin + position.x * (xMax - xMin);
+
+    //    // Linear interpolation of Y (Z in unity)
+    //    float yMin = tablePositions[1].z;
+    //    float yMax = tablePositions[2].z;
+    //    float newY = yMin + position.z * (yMax - yMin);
+
+    //    // Linear interpolation of Z (Y in unity)
+    //    float z1 = tablePositions[0].y * ((xMax - xMin) / (xMax - newX)) + tablePositions[1].y * ((xMax - xMin) / (newX - xMin));
+    //    float z2 = tablePositions[3].y * ((xMax - xMin) / (xMax - newX)) + tablePositions[2].y * ((xMax - xMin) / (newX - xMin));
+    //    float newZ = z2 * ((yMax - yMin) / (yMax - newY)) + z1 * ((yMax - yMin) / (newY - yMin));
+    //    return new Vector3(newX, newZ, newY);
+    //}
+
     private void simulateMarkerMovement(){
         frameIncrement += 0.0001f;
         int numberOfMarkers = 5;
