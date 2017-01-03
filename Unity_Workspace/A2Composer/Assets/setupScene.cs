@@ -83,17 +83,26 @@ public class setupScene : MonoBehaviour
         parent.transform.name = "Table Object";
 
         // Create markers (cubes)
-        for (int i = 0; i < maxMarkers; i++)
-        {
-            //markerCubes[i] = new GameObject();
-            markerCubes[i] = GameObject.CreatePrimitive(PrimitiveType.Cube);
+        GameObject MarkerMaster = GameObject.Find("MarkerMaster");
+        for (int i = 0; i < maxMarkers; i++){
+            // NEW
+            markerCubes[i] = Instantiate(MarkerMaster);
             markerCubes[i].transform.SetParent(parent.transform);
             markerCubes[i].SetActive(false);
             markerCubes[i].transform.name = "Marker" + i;
-            markerCubes[i].transform.localScale = new Vector3(markerScale, markerScale, markerScale);
-
-            markerCubes[i].GetComponent<Renderer>().material.color = new Color(0, 255, 0);
+            markerCubes[i].transform.FindChild("MarkerPivot").transform.FindChild("Cube").GetComponent<Renderer>().material.color = new Color(0, 255, 0); ;
+            //markerCubes[i].transform.localScale = new Vector3(markerScale, markerScale, markerScale);
+            
+            //// OLD
+            ////markerCubes[i] = new GameObject();
+            //markerCubes[i] = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            //markerCubes[i].transform.SetParent(parent.transform);
+            //markerCubes[i].SetActive(false);
+            //markerCubes[i].transform.name = "Marker" + i;
+            //markerCubes[i].transform.localScale = new Vector3(markerScale, markerScale, markerScale);
+            //markerCubes[i].GetComponent<Renderer>().material.color = new Color(0, 255, 0);
         }
+        MarkerMaster.SetActive(false);
         networkData = gameObject.GetComponent<readInNetworkData>();
         tableCalib.enabled = true;
     }
@@ -105,30 +114,27 @@ public class setupScene : MonoBehaviour
 
     private void simulateMarkerMovement()
     {
-        /*
-        frameIncrement += 0.0001f;
-        int numberOfMarkers = 5;
-        networkMarkers = new Marker[numberOfMarkers];
-        networkMarkers[0] = new Marker(1, -0.1f - frameIncrement, -0.1f - frameIncrement, 50.0f + frameIncrement * 10000);
-        networkMarkers[1] = new Marker(2, -0.1f - frameIncrement, 0.1f + frameIncrement, 10.0f - frameIncrement * 10000);
-        networkMarkers[2] = new Marker(3, 0.1f + frameIncrement, 0.1f + frameIncrement, 170.0f + frameIncrement * 10000);
-        networkMarkers[3] = new Marker(4, 0.1f + frameIncrement, -0.1f - frameIncrement, 90.0f - frameIncrement * 10000);
-        networkMarkers[4] = new Marker(-1, 0.0f, 0.0f, 0.0f);
-        markerArraySet = true;
-        */
+
+        //frameIncrement += 0.0001f;
+        //int numberOfMarkers = 5;
+        //networkMarkers = new Marker[numberOfMarkers];
+        //networkMarkers[0] = new Marker(1, -0.1f - frameIncrement, -0.1f - frameIncrement, 50.0f + frameIncrement * 10000);
+        //networkMarkers[1] = new Marker(2, -0.1f - frameIncrement, 0.1f + frameIncrement, 10.0f - frameIncrement * 10000);
+        //networkMarkers[2] = new Marker(3, 0.1f + frameIncrement, 0.1f + frameIncrement, 170.0f + frameIncrement * 10000);
+        //networkMarkers[3] = new Marker(4, 0.1f + frameIncrement, -0.1f - frameIncrement, 90.0f - frameIncrement * 10000);
+        //networkMarkers[4] = new Marker(-1, 0.0f, 0.0f, 0.0f);
+        //markerArraySet = true;
+
     }
 
 
     // Update is called once per frame
     void Update()
     {
-        if (bypassNetwork)
-        {
+        if (bypassNetwork){
             simulateMarkerMovement();
-            networkMarkers = networkData.getMarkers();
-        }
-        else if (markerArraySet)
-        {
+            //networkMarkers = networkData.getMarkers();
+        }else if (markerArraySet){
             networkMarkersPrevFrame = networkMarkers;
             for (int i = 0; i < networkMarkers.Length; i++)
             {
