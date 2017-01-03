@@ -1,6 +1,0 @@
-<achievement>
- <uniqueid>0</uniqueid>
- <referencename>My Achievement</referencename>
- <goal>Solve until 10 seconds</goal>
- <points>10</points>
-</achievement>
