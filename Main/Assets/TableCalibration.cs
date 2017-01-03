@@ -4,7 +4,7 @@ using System.Collections;
 public class TableCalibration : MonoBehaviour
 {
     //Steam Controller Input shit
-    public Transform xyz;
+    //public Transform xyz;
     private SteamVR_TrackedObject controller;
     private SteamVR_Controller.Device controllerdevice;
     private int markerCounter;
@@ -19,7 +19,7 @@ public class TableCalibration : MonoBehaviour
         planeZOffset = -0.15f;
         positions = new Vector3[2];
         markerCounter = 0;
-        //Pulling the Controllers into the controller Array
+        // Put controllers into controller array
         controller = GetComponent<SteamVR_TrackedObject>();
         // controllers[1] = GetComponent<SteamVR_TrackedObject>();
         setPositions = new bool[2] { false, false };
@@ -35,8 +35,7 @@ public class TableCalibration : MonoBehaviour
         return true;
     }
 
-    public void attemptCalibration()
-    {
+    public void attemptCalibration(){
         /*
         if (isMarkerVisible(m200.transform.position))
         {
@@ -73,24 +72,18 @@ public class TableCalibration : MonoBehaviour
         */
     }
 
-    public void setPosition(Vector3 position)
-    {
-        // Debug.Log(markerCounter);
-
-        if (markerCounter < 2 && markerCounter >= 0)
-        {
+    public void setPosition(Vector3 position){
+        if (markerCounter < 2 && markerCounter >= 0){
             positions[markerCounter] = position;
             setPositions[markerCounter] = true;
             markerCounter++;
-            Debug.Log("saving position: " + position);
+            Debug.Log("Saving table calibration position: " + position);
         }
-
     }
     // Update is called once per frame
     void Update()
     {
-        if (setPositions[0] && setPositions[1])
-        {
+        if (setPositions[0] && setPositions[1]){
             Debug.Log("Calibration successful.");
             setupScene.calibrationDone(positions);
             this.enabled = false;
