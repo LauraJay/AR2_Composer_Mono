@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using System;
 
 
 public class ContextMenu : MonoBehaviour {
@@ -20,12 +21,16 @@ public class ContextMenu : MonoBehaviour {
     // Use this for initialization
     void Start () {
         cam = GameObject.Find("Camera").GetComponent<Camera>();
-        textArea = GameObject.Find("ContextMenuText").GetComponent<Text>();
-        contextMenu = GameObject.Find("ContextMenu");
-        cube = GameObject.Find("MarkerPivot").gameObject;
+        textArea = gameObject.GetComponent<Text>();
+        contextMenu = textArea.transform.parent.gameObject;
+        canvasTransform = contextMenu.transform.parent.gameObject;
+        cube = canvasTransform.transform.parent.FindChild("MarkerPivot").gameObject;
         marker = cube.transform.parent.gameObject;
-        canvasTransform = GameObject.Find("CanvasTransform");
-        buildingID = System.Int32.Parse(marker.name.Substring(6));
+        String id = marker.name.Substring(6);
+        if (!id.Equals("Master"))
+            buildingID = System.Int32.Parse(marker.name.Substring(6));
+        else
+            buildingID = 0;
     }
 	
 	// Update is called once per frame
