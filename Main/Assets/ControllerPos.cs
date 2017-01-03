@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections;
 
 public class ControllerPos : MonoBehaviour
 {
@@ -7,23 +6,14 @@ public class ControllerPos : MonoBehaviour
     private SteamVR_TrackedObject trackedObj;
     private SteamVR_Controller.Device controllerdevice;
     
-   // public 
-    // Use this for initialization
-    void Start()
-    {
+    void Start(){
         trackedObj = GetComponent<SteamVR_TrackedObject>();
-
+        controllerdevice = SteamVR_Controller.Input((int)trackedObj.index); // Moved from update(), working??
     }
-
-    // Update is called once per frame
-    void Update()
-    {
-        controllerdevice = SteamVR_Controller.Input((int)trackedObj.index);
-        if (controllerdevice.GetPressDown(SteamVR_Controller.ButtonMask.Trigger))
-        {
-          //  Debug.Log("ControllerPos.cs: " + controllerdevice.transform.pos);
-            TableCalibration.GetComponent<TableCalibration>().setPosition((Vector3) controllerdevice.transform.pos);
-           // centerCube.localPosition = controllerdevice.transform.pos;
+    
+    void Update(){
+        if (controllerdevice.GetPressDown(SteamVR_Controller.ButtonMask.Trigger)){
+            TableCalibration.GetComponent<TableCalibration>().setPosition(controllerdevice.transform.pos);
         }
     }
 }
