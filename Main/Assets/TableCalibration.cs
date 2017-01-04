@@ -30,8 +30,7 @@ public class TableCalibration : MonoBehaviour{
         }
     }
 
-    void Update()
-    {
+    void Update(){
         if (setPositions[0] && setPositions[1]){
             Debug.Log("Calibration successful.");
             setupScene.calibrationDone(positions);

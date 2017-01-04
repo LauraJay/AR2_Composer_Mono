@@ -18,7 +18,7 @@ public class ContextMenu : MonoBehaviour {
 
     // Use this for initialization
     void Start () {
-        cam = GameObject.Find("Camera (head)").GetComponent<Camera>();
+        cam = GameObject.Find("Camera (eye)").GetComponent<Camera>();
         textArea = gameObject.GetComponent<Text>();
         contextMenu = textArea.transform.parent.gameObject;
         canvasTransform = contextMenu.transform.parent.gameObject;

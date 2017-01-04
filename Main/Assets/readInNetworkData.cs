@@ -15,8 +15,8 @@ public class readInNetworkData : MonoBehaviour {
     Marker[] markers;
     long frameCounter = 0;
     bool oneMarkerSet = false;
-    setupScene setupScene;
-    Text TCPText;
+    public setupScene setupScene;
+    public Text TCPText;
 
     [Header("Socket Settings")]
     public String Host = "192.168.0.5";
@@ -32,12 +32,12 @@ public class readInNetworkData : MonoBehaviour {
 
     // Initialization
     void Start(){
-        TCPText = GameObject.Find("TCPText").GetComponent<Text>();
+        //TCPText = GameObject.Find("ContextMenuText").GetComponent<Text>();
         readBufferLength = bytesPerMarker * maxMarkerCount + 4; // +4 because ID=-1 marks end of frame
         writeBufferLength = 4;
         writeStatus = 0;
         markers = new Marker[maxMarkerCount + 1];
-        setupScene = gameObject.GetComponent<setupScene>();
+        //setupScene = gameObject.GetComponent<setupScene>();
         setupSocket();
     }
 
@@ -71,7 +71,7 @@ public class readInNetworkData : MonoBehaviour {
                     for (int i = 0; i < readBufferLength; i += bytesPerMarker){
                         int curID = System.BitConverter.ToInt32(readBuffer, i); // ID
                         if (curID == -1){ // End of frame reached?
-                            Debug.Log("Last masker reached, suspending loop for current frame " + frameCounter + ".");
+                            //Debug.Log("Last masker reached, suspending loop for current frame " + frameCounter + ".");
                             frameCounter++;
                             markers[i / bytesPerMarker + 1] = new Marker(-1, 0.0f, 0.0f, 0.0f, 0);
                             break;
@@ -93,8 +93,7 @@ public class readInNetworkData : MonoBehaviour {
                     if (oneMarkerSet)
                         setupScene.setMarkerArraySet(true);
                 }
-                else
-                {
+                else{
                     Debug.LogError("Number of bytes read from stream NOT equal to buffer length!");
                 }
             }
