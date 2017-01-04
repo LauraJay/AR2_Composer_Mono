@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 using System;
 
@@ -20,7 +18,7 @@ public class ContextMenu : MonoBehaviour {
 
     // Use this for initialization
     void Start () {
-        cam = GameObject.Find("Camera").GetComponent<Camera>();
+        cam = GameObject.Find("Camera (head)").GetComponent<Camera>();
         textArea = gameObject.GetComponent<Text>();
         contextMenu = textArea.transform.parent.gameObject;
         canvasTransform = contextMenu.transform.parent.gameObject;
