@@ -11,6 +11,10 @@ public class MarkerScale : MonoBehaviour {
     private Vector2 originalPosZ;
     private Vector3 newScale;
 
+    public bool xIsPressed;
+    public bool yIsPressed;
+    public bool zIsPressed;
+
     // Use this for initialization
     void Start () {
         xHandle = gameObject.transform.parent.FindChild("X_Handle");

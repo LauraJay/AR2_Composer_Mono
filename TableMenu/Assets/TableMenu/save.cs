@@ -94,12 +94,19 @@ public class save : MonoBehaviour {
 		newPosX.InnerText = obj.transform.localPosition.x.ToString();
 		newPosY.InnerText = obj.transform.localPosition.y.ToString();
 		newPosZ.InnerText = obj.transform.localPosition.z.ToString() ;
-
+        /*
 		newRotationX.InnerText = obj.transform.localRotation.x.ToString();
 		newRotationY.InnerText = obj.transform.localRotation.y.ToString(); 
 		newRotationZ.InnerText = obj.transform.localRotation.z.ToString() ;
+        */
 
-		newScaleX.InnerText = obj.transform.localScale.x.ToString();
+
+        newRotationX.InnerText = obj.transform.localEulerAngles.x.ToString();
+        newRotationY.InnerText = obj.transform.localEulerAngles.y.ToString();
+        newRotationZ.InnerText = obj.transform.localEulerAngles.z.ToString();
+        // Debug.Log("rotation x:" + newRotationX.InnerText + " y:" + newRotationY.InnerText + " z:" + newRotationZ.InnerText);
+
+        newScaleX.InnerText = obj.transform.localScale.x.ToString();
 		newScaleY.InnerText = obj.transform.localScale.y.ToString();
 		newScaleZ.InnerText = obj.transform.localScale.z.ToString() ;
 

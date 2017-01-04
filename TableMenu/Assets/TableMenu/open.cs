@@ -12,7 +12,7 @@ using System.IO;
 public class open : MonoBehaviour {
 	public GameObject openDialog;
 	public GameObject initCube;
-	public GameObject initPos;
+	//public GameObject initPos;
 	private String projectPath;
 	//public bool visible;
 	// Use this for initialization
@@ -34,12 +34,12 @@ public class open : MonoBehaviour {
 				String tmpName = "Marker" + i;
 				tmp.name = tmpName;
 				tmp.transform.parent = GameObject.Find ("TableObjects").transform;
-
-				GameObject tmpPos = Instantiate (initPos);
-				tmpPos.transform.parent = tmp.transform;
+                tmp.transform.parent.gameObject.SetActive(true);
+              //  GameObject tmpPos = Instantiate (initPos);
+			//	tmpPos.transform.parent = tmp.transform;
 					
 				tmp.SetActive (true);
-				tmpPos.SetActive (true);
+				//tmpPos.SetActive (true);
 				float PosX=0.0f;
 				float PosY=0.0f; 
 				float PosZ=0.0f;
@@ -91,14 +91,17 @@ public class open : MonoBehaviour {
 
 					tmp.transform.localPosition = (new Vector3(PosX,PosY,PosZ));
 
-					tmp.transform.localRotation = Quaternion.Euler (RotX, RotY, RotZ); // need to be bugfixed 
-					tmp.transform.localScale = (new Vector3 (ScaleX, ScaleY, ScaleZ));
-					tmpPos.transform.localPosition = new Vector3(0,0,0);
-					tmpPos.transform.localRotation = tmp.transform.localRotation;
-					//tmpPos.GetComponent<MatchMode> ().matchMode = true;
+                    //tmp.transform.localRotation = Quaternion.Euler (RotX, RotY, RotZ); // need to be bugfixed 
+                     tmp.transform.localEulerAngles = (new Vector3(RotX, RotY, RotZ));
+                   // tmp.transform.
+                    tmp.transform.localScale = (new Vector3 (ScaleX, ScaleY, ScaleZ));
+				//	tmpPos.transform.localPosition = new Vector3(0,0,0);
+					//tmpPos.transform.localRotation = tmp.transform.localRotation;
+					//tmp.GetComponent<MatchMode> ().matchMode = true;
+                    tmp.transform.FindChild("Pivot").transform.FindChild("Plane").GetComponent<MatchMode>().matchMode = true;
 
 
-				}
+                }
 			}
 			crawlXML(nodes [i].ChildNodes);
 		}
