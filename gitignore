@@ -6,12 +6,12 @@
 /Main/[Bb]uilds/
 /Main/Assets/AssetStoreTools*
 
-/StartMenu/[Ll]ibrary/
-/StartMenu/[Tt]emp/
-/StartMenu/[Oo]bj/
-/StartMenu/[Bb]uild/
-/StartMenu/[Bb]uilds/
-/StartMenu/Assets/AssetStoreTools*
+/StartMenu/StartMenu/[Ll]ibrary/
+/StartMenu/StartMenu/[Tt]emp/
+/StartMenu/StartMenu/[Oo]bj/
+/StartMenu/StartMenu/[Bb]uild/
+/StartMenu/StartMenu/[Bb]uilds/
+/StartMenu/StartMenu/Assets/AssetStoreTools*
 
 /TableMenu/[Ll]ibrary/
 /TableMenu/[Tt]emp/
