@@ -13,12 +13,12 @@
 /StartMenu/[Bb]uilds/
 /StartMenu/Assets/AssetStoreTools*
 
-/TableMenu/[Ll]ibrary/
-/TableMenu/[Tt]emp/
-/TableMenu/[Oo]bj/
-/TableMenu/[Bb]uild/
-/TableMenu/[Bb]uilds/
-/TableMenu/Assets/AssetStoreTools*
+/TableMenu/TableMenu/[Ll]ibrary/
+/TableMenu/TableMenu/[Tt]emp/
+/TableMenu/TableMenu/[Oo]bj/
+/TableMenu/TableMenu/[Bb]uild/
+/TableMenu/TableMenu/[Bb]uilds/
+/TableMenu/TableMenu/Assets/AssetStoreTools*
 
 
 
