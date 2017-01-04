@@ -1,0 +1,32 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2015
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TableMenu.CSharp.Plugins", "TableMenu.CSharp.Plugins.csproj", "{69105DDB-37E7-EAF9-40A3-7336D4EC69E1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TableMenu.CSharp", "TableMenu.CSharp.csproj", "{EC44E314-E183-CFB0-CBA8-F3CD57803116}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TableMenu.CSharp.Editor", "TableMenu.CSharp.Editor.csproj", "{4036DE3B-1CEB-1098-36DD-22D090040057}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{69105DDB-37E7-EAF9-40A3-7336D4EC69E1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{69105DDB-37E7-EAF9-40A3-7336D4EC69E1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{69105DDB-37E7-EAF9-40A3-7336D4EC69E1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{69105DDB-37E7-EAF9-40A3-7336D4EC69E1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EC44E314-E183-CFB0-CBA8-F3CD57803116}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EC44E314-E183-CFB0-CBA8-F3CD57803116}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EC44E314-E183-CFB0-CBA8-F3CD57803116}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EC44E314-E183-CFB0-CBA8-F3CD57803116}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4036DE3B-1CEB-1098-36DD-22D090040057}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4036DE3B-1CEB-1098-36DD-22D090040057}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4036DE3B-1CEB-1098-36DD-22D090040057}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4036DE3B-1CEB-1098-36DD-22D090040057}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
