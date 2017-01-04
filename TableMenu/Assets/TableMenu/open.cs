@@ -28,12 +28,12 @@ public class open : MonoBehaviour {
 	void crawlXML( XmlNodeList nodes ){
 		for(int i=0; i< nodes.Count; i++){
 			//Debug.Log(nodes[i].Name);
-			if (nodes [i].Name.Contains ("Cube")) {
+			if (nodes [i].Name.Contains ("Marker")) {
 				Debug.Log ("CUBE FOUND BITCH");
 				GameObject tmp = Instantiate(initCube);
-				String tmpName = "Cube" + i;
+				String tmpName = "Marker" + i;
 				tmp.name = tmpName;
-				tmp.transform.parent = GameObject.Find ("Marker").transform;
+				tmp.transform.parent = GameObject.Find ("TableObjects").transform;
 
 				GameObject tmpPos = Instantiate (initPos);
 				tmpPos.transform.parent = tmp.transform;
@@ -95,7 +95,7 @@ public class open : MonoBehaviour {
 					tmp.transform.localScale = (new Vector3 (ScaleX, ScaleY, ScaleZ));
 					tmpPos.transform.localPosition = new Vector3(0,0,0);
 					tmpPos.transform.localRotation = tmp.transform.localRotation;
-					tmpPos.GetComponent<MatchMode> ().matchMode = true;
+					//tmpPos.GetComponent<MatchMode> ().matchMode = true;
 
 
 				}
@@ -104,6 +104,7 @@ public class open : MonoBehaviour {
 		}
 
 	}
+
 	public void setPath(){
 
 			Debug.Log ("OPENING: "+ this.gameObject.name);
@@ -112,7 +113,7 @@ public class open : MonoBehaviour {
 
 	public void openXml(String filePath){
 		Debug.Log ("Distroying current active markers..");
-		GameObject marker = GameObject.Find ("Marker");
+		GameObject marker = GameObject.Find ("TableObjects");
 		foreach (Transform child in marker.transform)
 		{
 			//if (child.name.Contains ("initCube")) {

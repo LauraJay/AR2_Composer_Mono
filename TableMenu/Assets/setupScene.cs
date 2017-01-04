@@ -83,7 +83,7 @@ public class setupScene : MonoBehaviour
         parent.transform.name = "Table Object";
 
         // Create markers (cubes)
-        GameObject MarkerMaster = GameObject.Find("MarkerMaster");
+        GameObject MarkerMaster = GameObject.Find("Marker");
         for (int i = 0; i < maxMarkers; i++){
             // NEW
             markerCubes[i] = Instantiate(MarkerMaster);

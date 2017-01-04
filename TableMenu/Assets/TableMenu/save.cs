@@ -24,7 +24,7 @@ public class save : MonoBehaviour {
 		projectPath =  Application.dataPath;
 	}
 
-	void saveScene	(){
+	public void saveScene	(){
 		
 		String timeStamp = System.DateTime.Now.ToString();
 
@@ -54,7 +54,7 @@ public class save : MonoBehaviour {
 
 
 		//Serialize (objects, filepath); 
-		traverseHirarchy(GameObject.Find("Marker"), root);
+		traverseHirarchy(GameObject.Find("TableObjects"), root);
 		Debug.Log ("Objects crawled!");
 		Debug.Log ("Path: " + filepath);
 		doc.Save (filepath);
