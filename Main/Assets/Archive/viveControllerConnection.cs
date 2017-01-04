@@ -16,7 +16,7 @@ public class viveControllerConnection : MonoBehaviour{
         if (device.GetPressDown(SteamVR_Controller.ButtonMask.Trigger)){
             device.TriggerHapticPulse(3000);
             device.TriggerHapticPulse(3000);
-            tableCalib.attemptCalibration();
+            //tableCalib.attemptCalibration();
         }
     }
 }

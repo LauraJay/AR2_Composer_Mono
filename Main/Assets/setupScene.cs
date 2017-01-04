@@ -5,11 +5,11 @@ public class setupScene : MonoBehaviour{
     GameObject[] markerCubes;
     readInNetworkData networkData;
     Marker[] networkMarkers;
-    Marker[] networkMarkersPrevFrame;
+    //Marker[] networkMarkersPrevFrame;
     bool markerArraySet = false;
     GameObject table;
     public bool bypassNetwork = true;
-    float frameIncrement = 0.0f;
+    //float frameIncrement = 0.0f;
     GameObject parent;
 
     [Header("Scene Settings")]
@@ -38,7 +38,7 @@ public class setupScene : MonoBehaviour{
                                         (markerPositions[0].x + markerPositions[1].x) / 2,
                                         (markerPositions[0].y + markerPositions[1].y) / 2,
                                         (markerPositions[0].z + markerPositions[1].z) / 2
-        );
+                                        );
         table.transform.position = position;
         table.transform.localScale = new Vector3(width, 1, height);
     }
@@ -94,16 +94,14 @@ public class setupScene : MonoBehaviour{
         return new Vector3(newX, newZ, newY);
     }
 
-    // Simulate a little bit of movement for
-    // 4 markers for when TCP cannot be used
+    // Simulate a little bit of movement for 4 markers for when TCP cannot be used
     private void simulateMarkerMovement(){
-        frameIncrement += 0.0001f;
-        int numberOfMarkers = 5;
-        networkMarkers = new Marker[numberOfMarkers];
-        networkMarkers[0] = new Marker(1, -0.1f - frameIncrement, -0.1f - frameIncrement, 50.0f + frameIncrement * 50, 1);
-        networkMarkers[1] = new Marker(2, -0.1f - frameIncrement, 0.1f + frameIncrement, 10.0f - frameIncrement * 50, 1);
-        networkMarkers[2] = new Marker(3, 0.1f + frameIncrement, 0.1f + frameIncrement, 170.0f + frameIncrement * 50, 1);
-        networkMarkers[3] = new Marker(4, 0.1f + frameIncrement, -0.1f - frameIncrement, 90.0f - frameIncrement * 50, 1);
+        //frameIncrement += 0.0001f;
+        networkMarkers = new Marker[5];
+        networkMarkers[0] = new Marker(1, 0.0f, 0.0f, 0.0f, 1); // Upper left
+        networkMarkers[1] = new Marker(2, 1.0f, 0.0f, 0.0f, 1); // Upper right
+        networkMarkers[2] = new Marker(3, 0.0f, 0.0f, 1.0f, 1); // Lower left
+        networkMarkers[3] = new Marker(4, 1.0f, 0.0f, 1.0f, 1); // Lower right
         networkMarkers[4] = new Marker(-1, 0.0f, 0.0f, 0.0f, 0);
         markerArraySet = true;
     }
@@ -114,7 +112,7 @@ public class setupScene : MonoBehaviour{
             simulateMarkerMovement();
         }
         if(markerArraySet){
-            networkMarkersPrevFrame = networkMarkers;
+            //networkMarkersPrevFrame = networkMarkers;
             for (int i = 0; i < networkMarkers.Length; i++){
                 Marker cur = networkMarkers[i];
                 if (cur.getID() == -1){
