@@ -6,19 +6,19 @@
 /Main/[Bb]uilds/
 /Main/Assets/AssetStoreTools*
 
-/StartMenu/[Ll]ibrary/
-/StartMenu/[Tt]emp/
-/StartMenu/[Oo]bj/
-/StartMenu/[Bb]uild/
-/StartMenu/[Bb]uilds/
-/StartMenu/Assets/AssetStoreTools*
+/StartMenu/StartMenu/[Ll]ibrary/
+/StartMenu/StartMenu/[Tt]emp/
+/StartMenu/StartMenu/[Oo]bj/
+/StartMenu/StartMenu/[Bb]uild/
+/StartMenu/StartMenu/[Bb]uilds/
+/StartMenu/StartMenu/Assets/AssetStoreTools*
 
-/TableMenu/TableMenu/[Ll]ibrary/
-/TableMenu/TableMenu/[Tt]emp/
-/TableMenu/TableMenu/[Oo]bj/
-/TableMenu/TableMenu/[Bb]uild/
-/TableMenu/TableMenu/[Bb]uilds/
-/TableMenu/TableMenu/Assets/AssetStoreTools*
+/TableMenu/[Ll]ibrary/
+/TableMenu/[Tt]emp/
+/TableMenu/[Oo]bj/
+/TableMenu/[Bb]uild/
+/TableMenu/[Bb]uilds/
+/TableMenu/Assets/AssetStoreTools*
 
 
 
