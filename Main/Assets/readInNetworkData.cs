@@ -19,7 +19,7 @@ public class readInNetworkData : MonoBehaviour {
     public Text TCPText;
 
     [Header("Socket Settings")]
-    public String Host = "192.168.0.5";
+    public String Host = "192.168.0.7";
     public Int32 Port = 10000;
     [Header("Data Stream Settings")]
     public int maxMarkerCount = 1;
@@ -52,6 +52,19 @@ public class readInNetworkData : MonoBehaviour {
         }
     }
 
+    void sendTCPdata(){
+        theStream.Write(writeBuffer, 0, writeBufferLength);
+    }
+
+    int receiveTCPdata(){
+        return theStream.Read(readBuffer, 0, readBufferLength);
+    }
+
+    struct TCPcontrolData{
+        int status;
+
+    }
+
     // Is called once every frame
     void Update(){
         setupScene.setMarkerArraySet(false);
@@ -59,13 +72,13 @@ public class readInNetworkData : MonoBehaviour {
         // Is the socket ready?
         if (socketReady){
             writeBuffer = System.BitConverter.GetBytes(writeStatus);
-            theStream.Write(writeBuffer, 0, writeBufferLength);
+            sendTCPdata();
 
             // Is the socket ready and does it have data waiting?
             if (socketReady && theStream.DataAvailable){
                 Debug.Log("Socket is ready and stream data is available.");
                 readBuffer = new byte[readBufferLength];
-                int bytesRead = theStream.Read(readBuffer, 0, readBufferLength); // Read socket
+                int bytesRead = receiveTCPdata();
                 if (bytesRead == readBufferLength){ // Number of bytes read equal to expected number?
                     Debug.Log("bytesRead is equal to bufferLength.");
                     for (int i = 0; i < readBufferLength; i += bytesPerMarker){
