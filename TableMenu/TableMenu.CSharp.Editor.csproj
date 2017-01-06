@@ -214,6 +214,7 @@
     <None Include="Assets\saves\1-5-2017 9-58-26 AM.xml" />
     <None Include="Assets\saves\1-5-2017 9-58-27 AM.xml" />
     <None Include="Assets\saves\1-5-2017 9-58-28 AM.xml" />
+    <None Include="Assets\saves\1-6-2017 10-44-54 AM.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\SyntaxTree\UnityVS\2015\UnityVS.CSharp.targets" />
 </Project>
