@@ -2,10 +2,11 @@
 
 public class ControllerPos : MonoBehaviour
 {
+    [Header("Dependencies")]
     public Transform tableCalib;
     private SteamVR_TrackedObject trackedObj;
     private SteamVR_Controller.Device controllerdevice;
-    private readInNetworkData networkData;
+    public readInNetworkData networkData;
 
     void Start(){
         trackedObj = GetComponent<SteamVR_TrackedObject>();

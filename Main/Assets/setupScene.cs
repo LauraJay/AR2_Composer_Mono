@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System;
+using System.Collections;
 
 public class setupScene : MonoBehaviour{
     private GameObject[] markerCubes;
@@ -33,6 +34,15 @@ public class setupScene : MonoBehaviour{
     // State for the main loop
     public enum state { planeCalib, poseCalib, startScene }
 
+    // FOR TESTING
+    bool statusChanged;
+    int currentState;
+
+    public void setState(int state){
+        currentState = state;
+        statusChanged = true;
+    }
+
     // Is called when table calibration finishes (in TableCalibration.cs)
     public void calibrationDone(Vector3 lowerLeft, Vector3 upperRight){
         // Make marker positions available globally
@@ -55,6 +65,10 @@ public class setupScene : MonoBehaviour{
     }
 
     void Start(){
+        // FOR TESTING
+        statusChanged = true;
+        currentState = 0;
+
         // Initialization
         calibDone = false;
         tableCalib.enabled = false;
@@ -147,31 +161,31 @@ public class setupScene : MonoBehaviour{
     }
 
     void Update(){
-
         // ToDo: control this from the menus
-        int currentState = -1;
-        if (Input.GetKeyDown("0"))
-            currentState = (int)state.planeCalib; 
-        if (Input.GetKeyDown("1"))
-            currentState = (int)state.poseCalib;
-        if (Input.GetKeyDown("2"))
-            currentState = (int)state.startScene;
-
-        switch (currentState){
-            case (int)state.poseCalib:
-                if (networkData.receiveTCPstatus() == (int)readInNetworkData.TCPstatus.poseCalibDone)
-                    currentState = (int)state.planeCalib;
-                break;
-            case (int)state.planeCalib:
-                tableCalib.enabled = true;
-                // Continue in TableCalibration.cs, when done set currentState to get cracking
-                currentState = (int)state.startScene;
-                break;
-            case (int)state.startScene:
-                networkData.sendTCPstatus((int)readInNetworkData.TCPstatus.sceneStart);
-                renderMarkersFromTCP();
-                break;
-            default: Debug.Log("setupScene state loop: no state specified."); break;
+        if (statusChanged) {
+            statusChanged = false;
+            switch (currentState){
+                case (int)state.planeCalib:
+                    Debug.Log("Entered state: planeCalib");
+                    tableCalib.enabled = true;
+                    networkData.sendTCPstatus((int)readInNetworkData.TCPstatus.planeOnlyCalib);
+                    // Continue in TableCalibration.cs, when done set currentState to get cracking
+                    break;
+                case (int)state.poseCalib:
+                    Debug.Log("Entered state: poseCalib");
+                    if (networkData.receiveTCPstatus() == (int)readInNetworkData.TCPstatus.planeCalibDone) { 
+                        // Enter scale menu
+                        setState((int)state.startScene);
+                    }
+                    break;
+                case (int)state.startScene:
+                    Debug.Log("Entered state: startScene");
+                    networkData.sendTCPstatus((int)readInNetworkData.TCPstatus.sceneStart);
+                    networkData.setSceneStarted(true);
+                    renderMarkersFromTCP();
+                    break;
+                default: Debug.Log("setupScene state loop: no state specified."); break;
+            }
         }
     }
 }

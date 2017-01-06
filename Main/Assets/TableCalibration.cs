@@ -7,7 +7,7 @@ public class TableCalibration : MonoBehaviour{
 
     [Header("Dependencies")]
     public setupScene setupScene;
-    private readInNetworkData networkData;
+    public readInNetworkData networkData;
     private SteamVR_TrackedObject controller;
     private SteamVR_Controller.Device controllerdevice;
 
@@ -21,7 +21,6 @@ public class TableCalibration : MonoBehaviour{
         planeHeightOffset = -0.15f;
         LLset = false;
         URset = false;
-        markerCounter = 0;
         controller = GetComponent<SteamVR_TrackedObject>();
     }
 
@@ -29,15 +28,23 @@ public class TableCalibration : MonoBehaviour{
         int statusReceived = networkData.receiveTCPstatus();
         switch (statusReceived){
             case (int)readInNetworkData.TCPstatus.arucoFound1:
-                if(!LLset) {
+                if(!LLset && !URset) {
                     lowerLeft = position;
+                    LLset = true;
                     Debug.Log("Plane calibration [lower left]: calibrated to " + position);
+                }else{
+                    Debug.LogError("Plane calibration [lower left]: received status arucoFound1," +
+                        " but one position has already been set.");
                 }
                 break;
             case (int)readInNetworkData.TCPstatus.arucoFound2:
                 if (LLset && !URset){
+                    upperRight = position;
+                    URset = true;
                     Debug.Log("Plane calibration [upper right]: calibrated to " + position);
-                    markerCounter++;
+                }else{
+                    Debug.LogError("Plane calibration [upper right]: received status arucoFound2," +
+                        " but either lower left has not been set yet or upper right already has been.");
                 }
                 break;
             case (int)readInNetworkData.TCPstatus.arucoNotFound: break;
@@ -49,7 +56,15 @@ public class TableCalibration : MonoBehaviour{
     void Update(){
         if (LLset && URset){
             Debug.Log("Plane calibration: completed successfully.");
+
+            // Tell setupScene that the calibration has been completed
             setupScene.calibrationDone(lowerLeft, upperRight);
+            setupScene.setState((int)setupScene.state.poseCalib);
+
+            // Disable controller position script
+            //controller.GetComponent<ControllerPos>().enabled = false;
+
+            // Disable this script
             this.enabled = false;
         }
     }
