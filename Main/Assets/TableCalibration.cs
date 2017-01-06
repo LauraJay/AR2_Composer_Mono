@@ -1,39 +1,55 @@
 ﻿using UnityEngine;
 
 public class TableCalibration : MonoBehaviour{
+    private int markerCounter;
+    private bool LLset;
+    private bool URset;
+
+    [Header("Dependencies")]
+    public setupScene setupScene;
+    private readInNetworkData networkData;
     private SteamVR_TrackedObject controller;
     private SteamVR_Controller.Device controllerdevice;
-    private int markerCounter;
-    public Vector3[] positions;
-    public bool[] setPositions;
-    public setupScene setupScene;
-    public float planeZOffset;
+
+    [Header("Calibration")]
+    public Vector3 lowerLeft;
+    public Vector3 upperRight;
+    public float planeHeightOffset;
 
     // Use this for initialization
     void Start(){
-        planeZOffset = -0.15f;
-        positions = new Vector3[2];
+        planeHeightOffset = -0.15f;
+        LLset = false;
+        URset = false;
         markerCounter = 0;
         controller = GetComponent<SteamVR_TrackedObject>();
-        setPositions = new bool[2] { false, false };
     }
 
     public void setPosition(Vector3 position){
-        if (markerCounter < 2 && markerCounter >= 0){
-            positions[markerCounter] = position;
-            setPositions[markerCounter] = true;
-            markerCounter++;
-            if(markerCounter == 1)
-                Debug.Log("Lower left table calibration position: " + position);
-            if (markerCounter == 2)
-                Debug.Log("Upper right table calibration position: " + position);
+        int statusReceived = networkData.receiveTCPstatus();
+        switch (statusReceived){
+            case (int)readInNetworkData.TCPstatus.arucoFound1:
+                if(!LLset) {
+                    lowerLeft = position;
+                    Debug.Log("Plane calibration [lower left]: calibrated to " + position);
+                }
+                break;
+            case (int)readInNetworkData.TCPstatus.arucoFound2:
+                if (LLset && !URset){
+                    Debug.Log("Plane calibration [upper right]: calibrated to " + position);
+                    markerCounter++;
+                }
+                break;
+            case (int)readInNetworkData.TCPstatus.arucoNotFound: break;
+            case -1: Debug.LogError("Plane calibration: failed, because of a socket error."); break;
+            default: Debug.LogError("Plane calibration: unknown status received: " + statusReceived); break;
         }
     }
 
     void Update(){
-        if (setPositions[0] && setPositions[1]){
-            Debug.Log("Calibration successful.");
-            setupScene.calibrationDone(positions);
+        if (LLset && URset){
+            Debug.Log("Plane calibration: completed successfully.");
+            setupScene.calibrationDone(lowerLeft, upperRight);
             this.enabled = false;
         }
     }
