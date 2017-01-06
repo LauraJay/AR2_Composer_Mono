@@ -32,25 +32,32 @@ public class buttonPressed : MonoBehaviour {
     }
     public void yIsNotPressed()
     {
-        // Pivot.GetComponent<MarkerScale>().xIsPressed = false;
+         yButtonIsPressed = false;
         //xButtonIsPressed = false;
     }
     public void xIsNotPressed()
     {
         // Pivot.GetComponent<MarkerScale>().xIsPressed = false;
-        //xButtonIsPressed = false;
+        xButtonIsPressed = false;
     }
     // Update is called once per frame
     void Update () {
-		if(xButtonIsPressed)
-        {
-            // xHandle.transform.position = new Vector3(PinchDetector.transform.position.x, , xHandle.transform.position.z);
-            xHandle.transform.localPosition =  (new Vector3(xHandle.transform.InverseTransformPoint(PinchDetector.transform.position).x, xHandlePosition.y, xHandlePosition.z) );
-        }
+        if (xButtonIsPressed) { 
+
+              xHandle.transform.position = (PinchDetector.transform.position);//(new Vector3(yHandlePosition.x,yHandlePosition.y, yHandle.transform.InverseTransformPoint(PinchDetector.transform.position).x));
+             xHandle.transform.localPosition = new Vector3(xHandle.transform.localPosition.x , xHandlePosition.y, xHandlePosition.z);
+      }
         if (yButtonIsPressed)
         {
             // xHandle.transform.position = new Vector3(PinchDetector.transform.position.x, , xHandle.transform.position.z);
-            yHandle.transform.localPosition = (new Vector3(yHandlePosition.x,yHandlePosition.y, yHandle.transform.InverseTransformPoint(PinchDetector.transform.position).x));
+
+                yHandle.transform.position = (PinchDetector.transform.position);//(new Vector3(yHandlePosition.x,yHandlePosition.y, yHandle.transform.InverseTransformPoint(PinchDetector.transform.position).x));
+                yHandle.transform.localPosition = new Vector3(yHandlePosition.x, yHandlePosition.y, yHandle.transform.localPosition.z);
+
+                // Debug.Log(yHandle.transform.InverseTransformPoint(PinchDetector.transform.position).y);
+                //  Debug.Log("Handle:"+yHandle.transform.localPosition.y);
+
+
         }
     }
 }
