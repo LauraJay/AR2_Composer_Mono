@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
+using System.Collections;
+using System;
 
 public class Webcam : MonoBehaviour {
     public RawImage rawImage;
@@ -9,7 +11,8 @@ public class Webcam : MonoBehaviour {
 	 WebCamDevice[] devices  = WebCamTexture.devices;
         rend = GetComponent<Renderer>();
         rend.enabled = true;
-        for( int i = 0; i< devices.Length; i++){
+         for( int i = 0; i< devices.Length; i++)
+        {
             Debug.Log("Webcam found: " + devices[i].name);
         }
         WebCamTexture leftCam = new WebCamTexture();
@@ -25,5 +28,8 @@ public class Webcam : MonoBehaviour {
 
     }
 
-    void Update () {}
+    // Update is called once per frame
+    void Update () {
+	
+	}
 }

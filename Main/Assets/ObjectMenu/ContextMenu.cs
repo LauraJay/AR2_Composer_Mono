@@ -3,7 +3,8 @@ using UnityEngine.UI;
 using System;
 
 
-public class ContextMenu : MonoBehaviour {
+public class ContextMenu : MonoBehaviour
+{
 
     GameObject marker;
     GameObject cube;
@@ -17,7 +18,8 @@ public class ContextMenu : MonoBehaviour {
     Camera cam;
 
     // Use this for initialization
-    void Start () {
+    void Start()
+    {
         cam = GameObject.Find("Camera (eye)").GetComponent<Camera>();
         textArea = gameObject.GetComponent<Text>();
         contextMenu = textArea.transform.parent.gameObject;
@@ -30,9 +32,10 @@ public class ContextMenu : MonoBehaviour {
         else
             buildingID = 0;
     }
-	
-	// Update is called once per frame
-	void Update () {
+
+    // Update is called once per frame
+    void Update()
+    {
         dims.x = cube.transform.localScale.x;
         dims.y = cube.transform.localScale.y;
         dims.z = cube.transform.localScale.z;

@@ -52,9 +52,6 @@
     <Reference Include="UnityEngine">
       <HintPath>Library\UnityAssemblies\UnityEngine.dll</HintPath>
     </Reference>
-    <Reference Include="UnityEngine.Advertisements">
-      <HintPath>Library\UnityAssemblies\UnityEngine.Advertisements.dll</HintPath>
-    </Reference>
     <Reference Include="UnityEngine.UI">
       <HintPath>Library\UnityAssemblies\UnityEngine.UI.dll</HintPath>
     </Reference>
@@ -69,9 +66,6 @@
     </Reference>
     <Reference Include="UnityEngine.HoloLens">
       <HintPath>Library\UnityAssemblies\UnityEngine.HoloLens.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine.Purchasing">
-      <HintPath>Library\UnityAssemblies\UnityEngine.Purchasing.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.VR">
       <HintPath>Library\UnityAssemblies\UnityEngine.VR.dll</HintPath>
@@ -254,6 +248,7 @@
     <None Include="Assets\TableMenu\FileBrowser\readme.txt" />
     <None Include="Assets\TableMenu\SaveData\readme.txt" />
     <None Include="Assets\TableMenu\myxml.xml" />
+    <None Include="Assets\saves\1-11-2017 10-47-43 AM.xml" />
     <None Include="Assets\saves\1-4-2017 1-53-26 PM.xml" />
     <None Include="Assets\saves\1-4-2017 3-15-36 PM.xml" />
     <None Include="Assets\saves\1-4-2017 3-15-46 PM.xml" />
