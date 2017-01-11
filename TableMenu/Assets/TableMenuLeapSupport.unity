@@ -5184,7 +5184,8 @@ MonoBehaviour:
   xHandle: {fileID: 1551477193}
   yHandle: {fileID: 57414154}
   zHandle: {fileID: 635542289}
-  PinchDetector: {fileID: 236528785}
+  PinchDetectorR: {fileID: 236528785}
+  PinchDetectorL: {fileID: 23276368}
 --- !u!114 &1324433460
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6224,7 +6225,8 @@ MonoBehaviour:
   xHandle: {fileID: 1551477193}
   yHandle: {fileID: 57414154}
   zHandle: {fileID: 635542289}
-  PinchDetector: {fileID: 236528785}
+  PinchDetectorR: {fileID: 0}
+  PinchDetectorL: {fileID: 0}
 --- !u!114 &1457857303
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8022,7 +8024,8 @@ MonoBehaviour:
   xHandle: {fileID: 1551477193}
   yHandle: {fileID: 57414154}
   zHandle: {fileID: 635542289}
-  PinchDetector: {fileID: 236528785}
+  PinchDetectorR: {fileID: 0}
+  PinchDetectorL: {fileID: 0}
 --- !u!114 &1708955285
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10262,7 +10265,8 @@ MonoBehaviour:
   xHandle: {fileID: 1551477193}
   yHandle: {fileID: 57414154}
   zHandle: {fileID: 635542289}
-  PinchDetector: {fileID: 236528785}
+  PinchDetectorR: {fileID: 236528785}
+  PinchDetectorL: {fileID: 23276368}
 --- !u!114 &1984022412
 MonoBehaviour:
   m_ObjectHideFlags: 0
