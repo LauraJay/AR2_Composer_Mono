@@ -8,16 +8,13 @@ public class ControllerPos : MonoBehaviour
     private SteamVR_Controller.Device controllerdevice;
     public readInNetworkData networkData;
 
-    void Start()
-    {
+    void Start(){
         trackedObj = GetComponent<SteamVR_TrackedObject>();
     }
 
-    void Update()
-    {
+    void Update(){
         controllerdevice = SteamVR_Controller.Input((int)trackedObj.index);
-        if (controllerdevice.GetPressDown(SteamVR_Controller.ButtonMask.Trigger))
-        {
+        if (controllerdevice.GetPressDown(SteamVR_Controller.ButtonMask.Trigger)){
             networkData.sendTCPstatus((int)readInNetworkData.TCPstatus.controllerButtonPressed);
             tableCalib.GetComponent<TableCalibration>().setPosition((Vector3)controllerdevice.transform.pos);
         }

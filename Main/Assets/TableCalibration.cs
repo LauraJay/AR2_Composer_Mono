@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class TableCalibration : MonoBehaviour{
     private int markerCounter;
@@ -15,9 +16,15 @@ public class TableCalibration : MonoBehaviour{
     public Vector3 lowerLeft;
     public Vector3 upperRight;
     public float planeHeightOffset;
+    private bool calibrateBoth;
+
+    public void setCalibrateBoth(bool status){
+        calibrateBoth = status;
+    }
 
     // Use this for initialization
     void Start(){
+        calibrateBoth = false;
         planeHeightOffset = -0.15f;
         LLset = false;
         URset = false;
@@ -59,7 +66,15 @@ public class TableCalibration : MonoBehaviour{
 
             // Tell setupScene that the calibration has been completed
             setupScene.calibrationDone(lowerLeft, upperRight);
-            setupScene.setState((int)setupScene.state.poseCalib);
+            if (calibrateBoth){
+                setupScene.setState((int)setupScene.state.poseAndPlaneCalibDone);
+                SceneManager.UnloadSceneAsync(SceneManager.GetSceneByName("doPlaneCalibInVS"));
+                SceneManager.LoadScene("doPoseCalibInVS", LoadSceneMode.Additive);
+            }else{
+                setupScene.setState((int)setupScene.state.planeCalibDone);
+                SceneManager.UnloadSceneAsync(SceneManager.GetSceneByName("doPlaneCalibInVS"));
+                SceneManager.LoadScene("CalibDone", LoadSceneMode.Additive);
+            }
 
             // Disable controller position script
             //controller.GetComponent<ControllerPos>().enabled = false;

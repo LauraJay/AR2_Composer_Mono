@@ -74,8 +74,8 @@ public class readInNetworkData : MonoBehaviour {
     public int receiveTCPstatus(){
         if (socketReady) {
             while (!theStream.DataAvailable) {
-                StartCoroutine(WaitForStreamData());
                 Debug.Log("Waiting for status to be received.");
+                StartCoroutine(WaitForSeconds(1));
             }
             byte[] receivedBytes = new byte[4];
             theStream.Read(receivedBytes, 0, 4);
@@ -148,8 +148,7 @@ public class readInNetworkData : MonoBehaviour {
         socketReady = false;
     }
 
-    IEnumerator WaitForStreamData(){
-        while (!theStream.DataAvailable)
-            yield return null;
+    IEnumerator WaitForSeconds(int t){
+            yield return new WaitForSeconds(t);
     }
 }

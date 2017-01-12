@@ -24,7 +24,7 @@ public class ContextMenu : MonoBehaviour
         textArea = gameObject.GetComponent<Text>();
         contextMenu = textArea.transform.parent.gameObject;
         canvasTransform = contextMenu.transform.parent.gameObject;
-        cube = canvasTransform.transform.parent.FindChild("MarkerPivot").gameObject;
+        cube = canvasTransform.transform.parent.FindChild("Pivot").gameObject;
         marker = cube.transform.parent.gameObject;
         String id = marker.name.Substring(6);
         if (!id.Equals("Master"))

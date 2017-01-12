@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System;
 using System.Collections;
+using UnityEngine.SceneManagement;
 
 public class setupScene : MonoBehaviour{
     private GameObject[] markerCubes;
@@ -32,7 +33,7 @@ public class setupScene : MonoBehaviour{
     private bool calibDone;
 
     // State for the main loop
-    public enum state { planeCalib, poseCalib, startScene }
+    public enum state { planeCalib, planeCalibDone, poseAndPlaneCalib, poseAndPlaneCalibDone, startScene }
 
     // FOR TESTING
     bool statusChanged;
@@ -41,6 +42,7 @@ public class setupScene : MonoBehaviour{
     public void setState(int state){
         currentState = state;
         statusChanged = true;
+        Debug.Log("State changed to " + state + ".");
     }
 
     // Is called when table calibration finishes (in TableCalibration.cs)
@@ -66,8 +68,8 @@ public class setupScene : MonoBehaviour{
 
     void Start(){
         // FOR TESTING
-        statusChanged = true;
-        currentState = 0;
+        //statusChanged = true;
+        //currentState = (int) state.poseAndPlaneCalib;
 
         // Initialization
         calibDone = false;
@@ -85,7 +87,7 @@ public class setupScene : MonoBehaviour{
             markerCubes[i].transform.SetParent(parent.transform);
             markerCubes[i].SetActive(false);
             markerCubes[i].transform.name = "Marker" + i;
-            markerCubes[i].transform.FindChild("MarkerPivot").transform.FindChild("Cube").GetComponent<Renderer>().material.color = new Color(0, 255, 0);
+            markerCubes[i].transform.FindChild("Pivot").transform.FindChild("Cube").GetComponent<Renderer>().material.color = new Color(0, 255, 0);
             markerCubes[i].transform.localScale = new Vector3(markerScale, markerScale, markerScale);
         }
         MarkerMaster.SetActive(false);
@@ -169,13 +171,25 @@ public class setupScene : MonoBehaviour{
                     Debug.Log("Entered state: planeCalib");
                     tableCalib.enabled = true;
                     networkData.sendTCPstatus((int)readInNetworkData.TCPstatus.planeOnlyCalib);
-                    // Continue in TableCalibration.cs, when done set currentState to get cracking
+                    // Continue in TableCalibration.cs, when done set currentState to get cracking                                     
                     break;
-                case (int)state.poseCalib:
-                    Debug.Log("Entered state: poseCalib");
-                    if (networkData.receiveTCPstatus() == (int)readInNetworkData.TCPstatus.planeCalibDone) { 
-                        // Enter scale menu
-                        setState((int)state.startScene);
+                case (int)state.planeCalibDone:
+                    Debug.Log("Entered state: planeCalibDone");
+                    if (networkData.receiveTCPstatus() == (int)readInNetworkData.TCPstatus.planeCalibDone){
+                        // Necessary?                        
+                    }
+                    break;
+                case (int)state.poseAndPlaneCalib:
+                    Debug.Log("Entered state: poseAndPlaneCalib");
+                    tableCalib.enabled = true;
+                    tableCalib.setCalibrateBoth(true);
+                    networkData.sendTCPstatus((int)readInNetworkData.TCPstatus.planeAndPoseCalib);
+                    break;
+                case (int)state.poseAndPlaneCalibDone:
+                    Debug.Log("Entered state: poseAndPlaneCalibDone");                   
+                    if (networkData.receiveTCPstatus() == (int)readInNetworkData.TCPstatus.poseCalibDone){                        
+                        SceneManager.UnloadSceneAsync(SceneManager.GetSceneByName("doPoseCalibInVS"));
+                        SceneManager.LoadScene("CalibDone", LoadSceneMode.Additive);
                     }
                     break;
                 case (int)state.startScene:
@@ -187,5 +201,5 @@ public class setupScene : MonoBehaviour{
                 default: Debug.Log("setupScene state loop: no state specified."); break;
             }
         }
-    }
+    }    
 }
