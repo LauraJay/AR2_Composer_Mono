@@ -72,8 +72,8 @@ public class readInNetworkData : MonoBehaviour {
 
     // Receive status over TCP according to TCPstatus enum
     public int receiveTCPstatus(){
-        if (socketReady) {
-            while (!theStream.DataAvailable) {
+        if (socketReady){
+            while (!theStream.DataAvailable){
                 Debug.Log("Waiting for status to be received.");
                 StartCoroutine(WaitForSeconds(1));
             }
@@ -86,6 +86,25 @@ public class readInNetworkData : MonoBehaviour {
         Debug.LogError("Failed to receive status, because the socket is not ready.");
         return -1;
     }
+
+    //// NEW IDEA: READ ASYNCHRONOUSLY FROM SOCKET
+    //// Receive status over TCP according to TCPstatus enum
+    //public int receiveTCPstatus(){
+    //    AsyncCallback callback = null;
+    //    int status = -1;
+    //    callback = ar => {
+    //        int bytesRead = theStream.EndRead(ar);
+    //        if (bytesRead == 4){
+    //            byte[] receivedBytes = new byte[4];
+    //            theStream.BeginRead(receivedBytes, 0, 4, callback, theStream);
+    //            status = System.BitConverter.ToInt32(receivedBytes, 0);
+    //            Debug.Log("Status received: " + status);
+    //        }else{
+    //            Debug.LogError("Failed to receive status, because the number of bytes read from the socket was incorrect (!= 4).");
+    //        }
+    //    };
+    //    return status;
+    //}
 
     // Returns the number of bytes that have been read from the stream in int
     private int receiveTCPdata(){
