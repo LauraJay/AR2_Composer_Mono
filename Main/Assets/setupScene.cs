@@ -45,6 +45,10 @@ public class setupScene : MonoBehaviour{
         Debug.Log("State changed to " + state + ".");
     }
 
+    public void setScale(int scale){
+        markerScale = 10 / (float)scale;
+    }
+
     // Is called when table calibration finishes (in TableCalibration.cs)
     public void calibrationDone(Vector3 lowerLeft, Vector3 upperRight){
         // Make marker positions available globally
