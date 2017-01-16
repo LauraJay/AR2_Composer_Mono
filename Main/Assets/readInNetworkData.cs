@@ -13,6 +13,8 @@ public class readInNetworkData : MonoBehaviour {
     Marker[] markers;
     long frameCounter = 0;
     bool oneMarkerSet = false;
+    //private byte[] receivedBytesStatus;
+    //private int receivedStatus;
     [Header("Dependencies")]
     public setupScene setupScene;
     public Text TCPText;
@@ -71,14 +73,11 @@ public class readInNetworkData : MonoBehaviour {
     }
 
     // Receive status over TCP according to TCPstatus enum
-    public int receiveTCPstatus()
-    {
-        if (socketReady)
-        {
-            while (!theStream.DataAvailable)
-            {
+    public int receiveTCPstatus(){
+        if (socketReady){
+            while (!theStream.DataAvailable){
                 Debug.Log("Waiting for status to be received.");
-                StartCoroutine(WaitForSeconds(1));
+                //System.Threading.Thread.Sleep(1000);
             }
             byte[] receivedBytes = new byte[4];
             theStream.Read(receivedBytes, 0, 4);
@@ -88,30 +87,32 @@ public class readInNetworkData : MonoBehaviour {
         }
         Debug.LogError("Failed to receive status, because the socket is not ready.");
         return -1;
-    }
+    }    
 
     //// NEW IDEA: READ ASYNCHRONOUSLY FROM SOCKET
     //// Receive status over TCP according to TCPstatus enum
-    //public int receiveTCPstatus()
-    //{
-    //    AsyncCallback callback = null;
-    //    int status = -1;
-    //    callback = ar =>
-    //    {
-    //        int bytesRead = theStream.EndRead(ar);
-    //        if (bytesRead == 4)
-    //        {
-    //            byte[] receivedBytes = new byte[4];
-    //            theStream.BeginRead(receivedBytes, 0, 4, callback, theStream);
-    //            status = System.BitConverter.ToInt32(receivedBytes, 0);
-    //            Debug.Log("Status received: " + status);
-    //        }
-    //        else
-    //        {
-    //            Debug.LogError("Failed to receive status, because the number of bytes read from the socket was incorrect (!= 4).");
-    //        }
-    //    };
-    //    return status;
+    //public int receiveTCPstatus(){
+    //    receivedStatus = -1;
+    //    receivedBytesStatus = new byte[4];
+    //    theStream.BeginRead(receivedBytesStatus, 0, 4, new AsyncCallback(DoRead), null);
+    //    return receivedStatus;
+    //}
+
+    //private void DoRead(IAsyncResult ar){
+    //    int BytesRead;
+    //    BytesRead = theStream.EndRead(ar);
+    //    if (BytesRead != 4){
+    //        receivedBytesStatus = new byte[4];
+    //        theStream.BeginRead(receivedBytesStatus, 0, 4, new AsyncCallback(DoRead), theStream);
+    //        return;
+    //    }
+    //    receivedStatus = System.BitConverter.ToInt32(receivedBytesStatus, 0);
+    //    switch (receivedStatus){
+    //        case (int)TCPstatus.arucoFound1: break;
+    //        case (int)TCPstatus.arucoFound2: break;
+    //        case (int)TCPstatus.planeCalibDone: break;
+    //        case (int)TCPstatus.poseCalibDone: break;
+    //    }
     //}
 
     // Returns the number of bytes that have been read from the stream in int
@@ -120,7 +121,7 @@ public class readInNetworkData : MonoBehaviour {
             readBuffer = new byte[readBufferLength];
             return theStream.Read(readBuffer, 0, readBufferLength);
         }
-        Debug.LogError("Failed to receive marker data. Socket ready: " + socketReady + "; stream data available: " + theStream.DataAvailable);
+        //Debug.LogError("Failed to receive marker data. Socket ready: " + socketReady + "; stream data available: " + theStream.DataAvailable);
         return -1;
     }
 
@@ -159,10 +160,11 @@ public class readInNetworkData : MonoBehaviour {
                 interpretTCPMarkerData(); // Interpret received data and fill markers[]
                 if (oneMarkerSet) // This is set in interpretTCPMarkerData()
                     setupScene.setMarkerArraySet(true); // Notify setupScene that marker array for this frame has been set
-            }else{
-                // This error should only occur when the stream length (in bytes) is not set correctly on both sides
-                Debug.LogError("Number of bytes read from stream NOT equal to buffer length!");
             }
+            //else {
+            //    // This error should only occur when the stream length (in bytes) is not set correctly on both sides
+            //    Debug.LogError("Number of bytes read from stream NOT equal to buffer length!");
+            //}
         }
     }
 
@@ -173,9 +175,5 @@ public class readInNetworkData : MonoBehaviour {
         theStream.Close();
         mySocket.Close();
         socketReady = false;
-    }
-
-    IEnumerator WaitForSeconds(int t){
-            yield return new WaitForSeconds(t);
     }
 }

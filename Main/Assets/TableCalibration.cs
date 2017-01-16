@@ -58,7 +58,7 @@ public class TableCalibration : MonoBehaviour{
             case -1: Debug.LogError("Plane calibration: failed, because of a socket error."); break;
             default: Debug.LogError("Plane calibration: unknown status received: " + statusReceived); break;
         }
-    }
+    }    
 
     void Update(){
         if (LLset && URset){
