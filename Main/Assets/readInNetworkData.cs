@@ -13,8 +13,7 @@ public class readInNetworkData : MonoBehaviour {
     Marker[] markers;
     long frameCounter = 0;
     bool oneMarkerSet = false;
-    //private byte[] receivedBytesStatus;
-    //private int receivedStatus;
+
     [Header("Dependencies")]
     public setupScene setupScene;
     public Text TCPText;
@@ -31,10 +30,11 @@ public class readInNetworkData : MonoBehaviour {
     public bool printMarkerDebugInfo = false;
 
     // TCP status enum for sending AND receiving statuses
-    public enum TCPstatus { planeAndPoseCalib, planeOnlyCalib, sceneStart, planeCalibDone, poseCalibDone, controllerButtonPressed, arucoFound1, arucoFound2, arucoNotFound };
+    public enum TCPstatus { planeAndPoseCalib, planeOnlyCalib, sceneStart, planeCalibDone,
+        poseCalibDone, controllerButtonPressed, arucoFound1, arucoFound2, arucoNotFound };
     private bool sceneStarted;
 
-    // Return markers array (used by setupScene.cs)
+    // Return markers array (is called by setupScene.cs)
     public Marker[] getMarkers() {
         return markers;
     }
@@ -47,10 +47,12 @@ public class readInNetworkData : MonoBehaviour {
         sceneStarted = false;
     }
 
+    // This is called by the menu that starts the normal tracking and rendering operation
     public void setSceneStarted(bool status){
         sceneStarted = status;
     }
 
+    // Set up and connect TCP socket
     private void setupSocket(){
         try{
             mySocket = new TcpClient(Host, Port);
@@ -77,7 +79,7 @@ public class readInNetworkData : MonoBehaviour {
         if (socketReady){
             while (!theStream.DataAvailable){
                 Debug.Log("Waiting for status to be received.");
-                //System.Threading.Thread.Sleep(1000);
+                System.Threading.Thread.Sleep(1000);
             }
             byte[] receivedBytes = new byte[4];
             theStream.Read(receivedBytes, 0, 4);
@@ -87,33 +89,7 @@ public class readInNetworkData : MonoBehaviour {
         }
         Debug.LogError("Failed to receive status, because the socket is not ready.");
         return -1;
-    }    
-
-    //// NEW IDEA: READ ASYNCHRONOUSLY FROM SOCKET
-    //// Receive status over TCP according to TCPstatus enum
-    //public int receiveTCPstatus(){
-    //    receivedStatus = -1;
-    //    receivedBytesStatus = new byte[4];
-    //    theStream.BeginRead(receivedBytesStatus, 0, 4, new AsyncCallback(DoRead), null);
-    //    return receivedStatus;
-    //}
-
-    //private void DoRead(IAsyncResult ar){
-    //    int BytesRead;
-    //    BytesRead = theStream.EndRead(ar);
-    //    if (BytesRead != 4){
-    //        receivedBytesStatus = new byte[4];
-    //        theStream.BeginRead(receivedBytesStatus, 0, 4, new AsyncCallback(DoRead), theStream);
-    //        return;
-    //    }
-    //    receivedStatus = System.BitConverter.ToInt32(receivedBytesStatus, 0);
-    //    switch (receivedStatus){
-    //        case (int)TCPstatus.arucoFound1: break;
-    //        case (int)TCPstatus.arucoFound2: break;
-    //        case (int)TCPstatus.planeCalibDone: break;
-    //        case (int)TCPstatus.poseCalibDone: break;
-    //    }
-    //}
+    }
 
     // Returns the number of bytes that have been read from the stream in int
     private int receiveTCPdata(){
@@ -121,10 +97,10 @@ public class readInNetworkData : MonoBehaviour {
             readBuffer = new byte[readBufferLength];
             return theStream.Read(readBuffer, 0, readBufferLength);
         }
-        //Debug.LogError("Failed to receive marker data. Socket ready: " + socketReady + "; stream data available: " + theStream.DataAvailable);
-        return -1;
+        return 0; // No data has been read
     }
 
+    // Convert byte[] data received over TCP to usable marker data
     private void interpretTCPMarkerData(){
         for (int i = 0; i < readBufferLength; i += bytesPerMarker){
             int curID = System.BitConverter.ToInt32(readBuffer, i); // Convert the marker ID
@@ -134,9 +110,9 @@ public class readInNetworkData : MonoBehaviour {
                 frameCounter++; // This is counted even if showMarkerDebugInfo is false, so that it can be enabled at any time
                 markers[i / bytesPerMarker + 1] = new Marker(-1, 0.0f, 0.0f, 0.0f, 0); // Set last marker as EOF (end of frame)
                 break;                                                                 // and suspend loop
-            }else if (curID < 0 || curID > maxMarkerCount){
+            }else if (curID < 0 || curID > maxMarkerCount){ // For debugging, this should not happen during normal operation
                 Debug.LogError("Marker ID not valid: " + curID);
-            }else{
+            }else{ // ID is valid and does not mark the end of the frame
                 float curPosX = System.BitConverter.ToSingle(readBuffer, i + 4); // Convert the x-position
                 float curPosY = System.BitConverter.ToSingle(readBuffer, i + 8); // Convert the y-position
                 float curAngle = System.BitConverter.ToSingle(readBuffer, i + 12); // Conver the angle
@@ -144,7 +120,7 @@ public class readInNetworkData : MonoBehaviour {
                 markers[i / bytesPerMarker] = new Marker(curID, curPosX, curPosY, curAngle, status); // Add new marker to array
                 oneMarkerSet = true;    // Give permission to use marker array since at least
                                         // one marker has been set for the current frame
-                TCPText.text = markers[i / bytesPerMarker].toStr();
+                TCPText.text = markers[i / bytesPerMarker].toStr(); // Set text on object menu canvas
                 if (printMarkerDebugInfo)
                     Debug.Log(markers[i / bytesPerMarker].toStr()); // Print debug message containing marker data
             }
@@ -152,19 +128,14 @@ public class readInNetworkData : MonoBehaviour {
     }
 
     void Update(){
-        if (sceneStarted) { 
-            setupScene.setMarkerArraySet(false);
-            oneMarkerSet = false;
-            int bytesRead = receiveTCPdata(); // Receive marker data via TCP
-            if (bytesRead == readBufferLength){
+        if (sceneStarted) { // Controlled by unity menu "thirdmenu"
+            setupScene.setMarkerArraySet(false); // Reset for next frame
+            oneMarkerSet = false;                // Reset for next frame
+            if (receiveTCPdata() == readBufferLength){ // Receive marker data via TCP
                 interpretTCPMarkerData(); // Interpret received data and fill markers[]
                 if (oneMarkerSet) // This is set in interpretTCPMarkerData()
                     setupScene.setMarkerArraySet(true); // Notify setupScene that marker array for this frame has been set
             }
-            //else {
-            //    // This error should only occur when the stream length (in bytes) is not set correctly on both sides
-            //    Debug.LogError("Number of bytes read from stream NOT equal to buffer length!");
-            //}
         }
     }
 

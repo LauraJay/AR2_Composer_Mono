@@ -33,18 +33,20 @@ public class setupScene : MonoBehaviour{
     private bool calibDone;
 
     // State for the main loop
-    public enum state { planeCalib, planeCalibDone, poseAndPlaneCalib, poseAndPlaneCalibDone, startScene }
+    public enum state { planeCalib, poseAndPlaneCalib, poseAndPlaneCalibDone, startScene }
 
     // FOR TESTING
     bool statusChanged;
     int currentState;
 
+    // Can be called to set the current state of the "Update()-loop"
     public void setState(int state){
         currentState = state;
         statusChanged = true;
         Debug.Log("State changed to " + state + ".");
     }
 
+    // Is called by the menu that lets the user set the scale
     public void setScale(int scale){
         markerScale = 10 / (float)scale;
     }
@@ -71,10 +73,6 @@ public class setupScene : MonoBehaviour{
     }
 
     void Start(){
-        // FOR TESTING
-        //statusChanged = true;
-        //currentState = (int) state.poseAndPlaneCalib;
-
         // Initialization
         calibDone = false;
         tableCalib.enabled = false;
@@ -98,6 +96,7 @@ public class setupScene : MonoBehaviour{
         networkData = gameObject.GetComponent<readInNetworkData>();
     }
 
+    // (Re-)Initialize marker that has been deleted
     private GameObject initializeMarker(int index){
         GameObject marker = GameObject.CreatePrimitive(PrimitiveType.Cube);
         marker.transform.SetParent(parent.transform);
@@ -151,7 +150,7 @@ public class setupScene : MonoBehaviour{
                 if (i == 0)
                     Debug.Log("Angle for ID 0: " + -cur.getAngle());
                 markerCubes[i].transform.rotation = Quaternion.Euler(0.0f, -cur.getAngle() + 45.0f, 0.0f);
-                if (cur.getStatus().Equals(1))
+                if (cur.getStatus() == 1)
                     markerCubes[i].SetActive(true);
                 else
                     markerCubes[i].SetActive(false);
@@ -175,13 +174,7 @@ public class setupScene : MonoBehaviour{
                     Debug.Log("Entered state: planeCalib");
                     tableCalib.enabled = true;
                     networkData.sendTCPstatus((int)readInNetworkData.TCPstatus.planeOnlyCalib);
-                    // Continue in TableCalibration.cs, when done set currentState to get cracking                                     
-                    break;
-                case (int)state.planeCalibDone:
-                    Debug.Log("Entered state: planeCalibDone");
-                    if (networkData.receiveTCPstatus() == (int)readInNetworkData.TCPstatus.planeCalibDone){
-                        // Necessary?                        
-                    }
+                    // Continue in TableCalibration.cs, when done set currentState to get cracking
                     break;
                 case (int)state.poseAndPlaneCalib:
                     Debug.Log("Entered state: poseAndPlaneCalib");
@@ -190,8 +183,8 @@ public class setupScene : MonoBehaviour{
                     networkData.sendTCPstatus((int)readInNetworkData.TCPstatus.planeAndPoseCalib);
                     break;
                 case (int)state.poseAndPlaneCalibDone:
-                    Debug.Log("Entered state: poseAndPlaneCalibDone");                   
-                    if (networkData.receiveTCPstatus() == (int)readInNetworkData.TCPstatus.poseCalibDone){                        
+                    Debug.Log("Entered state: poseAndPlaneCalibDone");
+                    if (networkData.receiveTCPstatus() == (int)readInNetworkData.TCPstatus.poseCalibDone){
                         SceneManager.UnloadSceneAsync(SceneManager.GetSceneByName("doPoseCalibInVS"));
                         SceneManager.LoadScene("CalibDone", LoadSceneMode.Additive);
                     }
