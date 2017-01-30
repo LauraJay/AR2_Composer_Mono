@@ -25,7 +25,9 @@ public class setupScene : MonoBehaviour{
     public int markersToRender = 256;
 
     // Global scale of each marker to fit size of virtual to real markers
-    public float markerScale = 0.05f;
+    public float markerScale = 0.05f;    
+    public float planeHeightOffset = -0.023f;
+    public float markerHeightOffset = -0.023f;
 
     // Calibrated positions for plane
     private Vector3 calibratedLL;
@@ -64,9 +66,9 @@ public class setupScene : MonoBehaviour{
         float height = Math.Abs(calibratedUR.z - calibratedLL.z);
         Vector3 position = new Vector3(
                                         (calibratedLL.x + calibratedUR.x) / 2,
-                                        (calibratedLL.y + calibratedUR.y) / 2,
+                                        ((calibratedLL.y + calibratedUR.y) / 2) + planeHeightOffset,
                                         (calibratedLL.z + calibratedUR.z) / 2
-                                        );
+                                      );
         table.transform.position = position;
         table.transform.localScale = new Vector3(width / 10, 1, height / 10);
         calibDone = true;
@@ -123,17 +125,16 @@ public class setupScene : MonoBehaviour{
         float xMax = calibratedUR.x;
         float newX = xMin + position.x * (xMax - xMin);
 
-        // Linear interpolation of Y (Z in unity)
-        float yMin = calibratedUR.z;
-        float yMax = calibratedLL.z;
-        float newY = yMin + position.z * (yMax - yMin);
+        // Linear interpolation of Y        
+        float newY = (calibratedUR.y + calibratedLL.y) / 2;
+        newY += markerHeightOffset;
 
-        // Linear interpolation of Z (Y in unity)
-        float zMin = calibratedUR.y;
-        float zMax = calibratedLL.y;
-        float newZ = zMin + position.y * (zMax - zMin);
+        // Linear interpolation of Z
+        float zMin = calibratedUR.z;
+        float zMax = calibratedLL.z;
+        float newZ = zMin + position.z * (zMax - zMin);
 
-        return new Vector3(newX, newZ, newY);
+        return new Vector3(newX, newY, newZ);
     }
 
     private void renderMarkersFromTCP(){
@@ -152,7 +153,8 @@ public class setupScene : MonoBehaviour{
                     break;
                 if (cur.getID() == -1)
                     break;
-                Vector3 position = new Vector3(cur.getPosX(), 0.0f, cur.getPosY());
+                //Vector3 position = new Vector3(cur.getPosX(), 0.0f, cur.getPosY());
+                Vector3 position = new Vector3(1 - cur.getPosY(), 0.0f, 1 - cur.getPosX());
                 if (calibDone)
                     markerCubes[i].transform.position = getCalibratedMarkerPos(position);
                 else

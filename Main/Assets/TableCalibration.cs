@@ -19,7 +19,6 @@ public class TableCalibration : MonoBehaviour{
     [Header("Calibration")]
     public Vector3 lowerLeft;
     public Vector3 upperRight;
-    public float planeHeightOffset = -0.15f;
     private bool calibrateBoth;
 
     public void setCalibrateBoth(bool status){
@@ -53,7 +52,7 @@ public class TableCalibration : MonoBehaviour{
                 if (LLset && !URset){
                     upperRight = position;
                     URset = true;
-                    positiveHapticFeedback();
+                    //positiveHapticFeedback();
                     Debug.Log("Plane calibration [upper right]: calibrated to " + position);
                 }else{
                     Debug.LogError("Plane calibration [upper right]: received status arucoFound2," +

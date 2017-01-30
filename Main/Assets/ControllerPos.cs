@@ -16,7 +16,7 @@ public class ControllerPos : MonoBehaviour
         controllerdevice = SteamVR_Controller.Input((int)trackedObj.index);
         if (controllerdevice.GetPressDown(SteamVR_Controller.ButtonMask.Trigger)){
             networkData.sendTCPstatus((int)readInNetworkData.TCPstatus.controllerButtonPressed);
-            tableCalib.GetComponent<TableCalibration>().setPosition((Vector3)controllerdevice.transform.pos);
+            tableCalib.GetComponent<TableCalibration>().setPosition(controllerdevice.transform.pos);
         }
     }
 }
