@@ -22,7 +22,7 @@ public class setupScene : MonoBehaviour{
     // This is overwritten by inspector input
     [Header("Scene Settings")]
     // Maximum number of markers that can be displayed (virtual markers)
-    public int maxMarkers = 256;
+    public int markersToRender = 256;
 
     // Global scale of each marker to fit size of virtual to real markers
     public float markerScale = 0.05f;
@@ -34,15 +34,15 @@ public class setupScene : MonoBehaviour{
 
     // State for the main loop
     public enum state { planeCalib, poseAndPlaneCalib, poseAndPlaneCalibDone, startScene }
-
-    // FOR TESTING
     bool statusChanged;
     int currentState;
+    bool doRender;
 
     // Can be called to set the current state of the "Update()-loop"
     public void setState(int state){
         currentState = state;
         statusChanged = true;
+        doRender = false;
         Debug.Log("State changed to " + state + ".");
     }
 
@@ -76,7 +76,7 @@ public class setupScene : MonoBehaviour{
         // Initialization
         calibDone = false;
         tableCalib.enabled = false;
-        markerCubes = new GameObject[maxMarkers];
+        markerCubes = new GameObject[markersToRender];
 
         // Create parent object (plane and cubes are attached to this)
         parent = new GameObject();
@@ -84,7 +84,7 @@ public class setupScene : MonoBehaviour{
 
         // Create markers (cubes)
         GameObject MarkerMaster = GameObject.Find("MarkerMaster");
-        for (int i = 0; i < maxMarkers; i++){
+        for (int i = 0; i < markersToRender; i++){
             markerCubes[i] = Instantiate(MarkerMaster);
             markerCubes[i].transform.SetParent(parent.transform);
             markerCubes[i].SetActive(false);
@@ -94,6 +94,11 @@ public class setupScene : MonoBehaviour{
         }
         MarkerMaster.SetActive(false);
         networkData = gameObject.GetComponent<readInNetworkData>();
+
+        for (int i = 0; i < Camera.allCamerasCount; i++){
+            Camera.allCameras[i].fieldOfView = 74;
+        }
+
     }
 
     // (Re-)Initialize marker that has been deleted
@@ -133,23 +138,26 @@ public class setupScene : MonoBehaviour{
 
     private void renderMarkersFromTCP(){
         if (markerArraySet){
-            networkMarkers = networkData.getMarkers();
+            // Remember markers from previous frame to
+            // determine which ones have been deleted
             networkMarkersPrevFrame = networkMarkers;
+
+            // Pull markers for current frame from
+            // readInNetworkData script
+            networkMarkers = networkData.getMarkers();
+             
             for (int i = 0; i < networkMarkers.Length; i++){
                 Marker cur = networkMarkers[i];
                 if (cur == null)
                     break;
-                if (cur.getID() == -1){
+                if (cur.getID() == -1)
                     break;
-                }
-                Vector3 position = new Vector3(1 - cur.getPosX(), 0.0f, cur.getPosY());
+                Vector3 position = new Vector3(cur.getPosX(), 0.0f, cur.getPosY());
                 if (calibDone)
                     markerCubes[i].transform.position = getCalibratedMarkerPos(position);
                 else
                     markerCubes[i].transform.position = position;
-                if (i == 0)
-                    Debug.Log("Angle for ID 0: " + -cur.getAngle());
-                markerCubes[i].transform.rotation = Quaternion.Euler(0.0f, -cur.getAngle() + 45.0f, 0.0f);
+                markerCubes[i].transform.rotation = Quaternion.Euler(0.0f, cur.getAngle(), 0.0f);
                 if (cur.getStatus() == 1)
                     markerCubes[i].SetActive(true);
                 else
@@ -166,8 +174,10 @@ public class setupScene : MonoBehaviour{
     }
 
     void Update(){
+        if(doRender)
+            renderMarkersFromTCP();
         // ToDo: control this from the menus
-        if (statusChanged) {
+        else if (statusChanged) {
             statusChanged = false;
             switch (currentState){
                 case (int)state.planeCalib:
@@ -193,7 +203,7 @@ public class setupScene : MonoBehaviour{
                     Debug.Log("Entered state: startScene");
                     networkData.sendTCPstatus((int)readInNetworkData.TCPstatus.sceneStart);
                     networkData.setSceneStarted(true);
-                    renderMarkersFromTCP();
+                    doRender = true;                  
                     break;
                 default: Debug.Log("setupScene state loop: no state specified."); break;
             }

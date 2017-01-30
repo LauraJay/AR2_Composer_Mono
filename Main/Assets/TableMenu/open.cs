@@ -1,8 +1,5 @@
 ﻿using UnityEngine;
-using UnityEditor;
 using System;
-using UnityEditor.SceneManagement;
-using UnityEngine.SceneManagement;
 using System.Collections;
 using System.Collections.Generic;
 using System.Xml;

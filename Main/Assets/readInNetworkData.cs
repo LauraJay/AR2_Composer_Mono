@@ -25,7 +25,7 @@ public class readInNetworkData : MonoBehaviour {
 
     // This is overwritten by inspector input
     [Header("Data Stream Settings")]
-    public int maxMarkerCount = 100; // This multiplied by bytesPerMarker has to match
+    public int markersToReceive = 100; // This multiplied by bytesPerMarker has to match
     public int bytesPerMarker = 20;  // the length of the byte array that is sent over TCP
     public bool printMarkerDebugInfo = false;
 
@@ -41,8 +41,8 @@ public class readInNetworkData : MonoBehaviour {
 
     // Initialization
     void Start(){
-        readBufferLength = bytesPerMarker * maxMarkerCount + 4; // +4 because ID=-1 marks end of frame
-        markers = new Marker[maxMarkerCount + 1];
+        readBufferLength = bytesPerMarker * markersToReceive + 4; // +4 because ID=-1 marks end of frame
+        markers = new Marker[markersToReceive + 1];
         setupSocket();
         sceneStarted = false;
     }
@@ -110,7 +110,7 @@ public class readInNetworkData : MonoBehaviour {
                 frameCounter++; // This is counted even if showMarkerDebugInfo is false, so that it can be enabled at any time
                 markers[i / bytesPerMarker + 1] = new Marker(-1, 0.0f, 0.0f, 0.0f, 0); // Set last marker as EOF (end of frame)
                 break;                                                                 // and suspend loop
-            }else if (curID < 0 || curID > maxMarkerCount){ // For debugging, this should not happen during normal operation
+            }else if (curID < 0 || curID > markersToReceive){ // For debugging, this should not happen during normal operation
                 Debug.LogError("Marker ID not valid: " + curID);
             }else{ // ID is valid and does not mark the end of the frame
                 float curPosX = System.BitConverter.ToSingle(readBuffer, i + 4); // Convert the x-position

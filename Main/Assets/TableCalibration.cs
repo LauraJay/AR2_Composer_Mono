@@ -42,7 +42,7 @@ public class TableCalibration : MonoBehaviour{
                 if(!LLset && !URset) {
                     lowerLeft = position;
                     LLset = true;
-                    positiveHapticFeedback();
+                    //positiveHapticFeedback();
                     Debug.Log("Plane calibration [lower left]: calibrated to " + position);
                 }else{
                     Debug.LogError("Plane calibration [lower left]: received status arucoFound1," +
@@ -60,7 +60,7 @@ public class TableCalibration : MonoBehaviour{
                         " but either lower left has not been set yet or upper right already has been.");
                 }
                 break;
-            case (int)readInNetworkData.TCPstatus.arucoNotFound: LongVibration(1.0f, 1.0f); break;
+            case (int)readInNetworkData.TCPstatus.arucoNotFound: break;// LongVibration(1.0f, 1.0f); break;
             case -1: Debug.LogError("Plane calibration: failed, because of a socket error."); break;
             default: Debug.LogError("Plane calibration: unknown status received: " + statusReceived); break;
         }
@@ -69,9 +69,9 @@ public class TableCalibration : MonoBehaviour{
     // Let the vive controller give out three short haptic
     // pulses as confirmation that one point has been set
     private void positiveHapticFeedback(){
-        controllerdevice.TriggerHapticPulse(3500);
-        controllerdevice.TriggerHapticPulse(3500);
-        controllerdevice.TriggerHapticPulse(3500);
+        controllerdevice.TriggerHapticPulse(300);
+        controllerdevice.TriggerHapticPulse(300);
+        controllerdevice.TriggerHapticPulse(300);
     }
 
     // Let the vive controller give out one long haptic pulse
@@ -86,7 +86,7 @@ public class TableCalibration : MonoBehaviour{
 
 void Update(){
         // Needed for haptic feedback
-        controllerdevice = SteamVR_Controller.Input((int)trackedObj.index);
+        //controllerdevice = SteamVR_Controller.Input((int)trackedObj.index);
 
         if (LLset && URset){ // Calibration successful
             Debug.Log("Plane calibration: completed successfully.");

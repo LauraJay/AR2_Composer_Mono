@@ -11,12 +11,18 @@ public class Webcam : MonoBehaviour {
 	 WebCamDevice[] devices  = WebCamTexture.devices;
         rend = GetComponent<Renderer>();
         rend.enabled = true;
-         for( int i = 0; i< devices.Length; i++)
-        {
-            Debug.Log("Webcam found: " + devices[i].name);
-        }
         WebCamTexture leftCam = new WebCamTexture();
         leftCam.deviceName = devices[1].name;
+        for ( int i = 0; i< devices.Length; i++)
+        {
+            Debug.Log("Webcam found: " + devices[i].name);
+            if (devices[i].name == "Creative GestureCam")
+            {
+                leftCam.deviceName = devices[i].name;
+                Debug.Log("Monocamera connected successfully.");    
+            }
+        }
+        
         //rawImage.texture = leftCam;
         //rawImage.material.mainTexture = leftCam;
         rend.materials[0].mainTexture = leftCam;
