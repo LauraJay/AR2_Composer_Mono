@@ -167,21 +167,19 @@ public class setupScene : MonoBehaviour{
 
     private void renderMarkersFromTCP(){
         if (markerArraySet){
-            // Remember markers from previous frame to
-            // determine which ones have been deleted
-            networkMarkersPrevFrame = networkMarkers;
-
             // Pull markers for current frame from
             // readInNetworkData script
             networkMarkers = networkData.getMarkers();
-             
+
             for (int i = 0; i < networkMarkers.Length; i++){
                 Marker cur = networkMarkers[i];
                 if (cur == null)
                     break;
                 if (cur.getID() == -1)
                     break;
-                //Vector3 position = new Vector3(cur.getPosX(), 0.0f, cur.getPosY());
+
+                // This makes no sense, but is a temporary fix
+                // for a problem perhaps caused by the Vive HMD
                 Vector3 position = new Vector3(1 - cur.getPosY(), 0.0f, 1 - cur.getPosX());
                 if (calibDone)
                     markerCubes[i].transform.position = getCalibratedMarkerPos(position);
@@ -200,6 +198,9 @@ public class setupScene : MonoBehaviour{
                 if (networkMarkersPrevFrame[j] != null && networkMarkers[j] == null)
                     markerCubes[j] = initializeMarker(j); //Marker has been deleted, reinitialize GameObject
             }
+            // Remember markers from previous frame to
+            // determine which ones have been deleted
+            networkMarkersPrevFrame = networkMarkers;
         }
     }
 

@@ -13,7 +13,7 @@ public class TableCalibration : MonoBehaviour{
     public ControllerPos controllerPos;
 
     // Needed for haptic feedback
-    private SteamVR_TrackedObject trackedObj;
+    public SteamVR_TrackedObject trackedObj;
     private SteamVR_Controller.Device controllerdevice;
 
     [Header("Calibration")]
@@ -29,7 +29,6 @@ public class TableCalibration : MonoBehaviour{
         calibrateBoth = false;
         LLset = false;
         URset = false;
-        trackedObj = GetComponent<SteamVR_TrackedObject>(); // Needed for haptic feedback
     }
 
     // This is called by ControllerPos.cs when the trigger on
@@ -41,10 +40,10 @@ public class TableCalibration : MonoBehaviour{
                 if(!LLset && !URset) {
                     lowerLeft = position;
                     LLset = true;
-                    //positiveHapticFeedback();
-                    Debug.Log("Plane calibration [lower left]: calibrated to " + position);
+                    positiveHapticFeedback();
+                    Debug.Log("[PLANE CALIBRATION] Lower left corner calibrated to " + position);
                 }else{
-                    Debug.LogError("Plane calibration [lower left]: received status arucoFound1," +
+                    Debug.LogError("[PLANE CALIBRATION] Lower left corner: received status arucoFound1," +
                         " but one position has already been set.");
                 }
                 break;
@@ -52,16 +51,16 @@ public class TableCalibration : MonoBehaviour{
                 if (LLset && !URset){
                     upperRight = position;
                     URset = true;
-                    //positiveHapticFeedback();
-                    Debug.Log("Plane calibration [upper right]: calibrated to " + position);
+                    positiveHapticFeedback();
+                    Debug.Log("[PLANE CALIBRATION] Upper right corner calibrated to " + position);
                 }else{
-                    Debug.LogError("Plane calibration [upper right]: received status arucoFound2," +
+                    Debug.LogError("[PLANE CALIBRATION] Upper right corner: received status arucoFound2," +
                         " but either lower left has not been set yet or upper right already has been.");
                 }
                 break;
-            case (int)readInNetworkData.TCPstatus.arucoNotFound: break;// LongVibration(1.0f, 1.0f); break;
-            case -1: Debug.LogError("Plane calibration: failed, because of a socket error."); break;
-            default: Debug.LogError("Plane calibration: unknown status received: " + statusReceived); break;
+            case (int)readInNetworkData.TCPstatus.arucoNotFound: LongVibration(1.0f, 1.0f); break;
+            case -1: Debug.LogError("[PLANE CALIBRATION] Failed, because of a socket error."); break;
+            default: Debug.LogError("[PLANE CALIBRATION] Unknown status received: " + statusReceived); break;
         }
     }
 
@@ -85,29 +84,22 @@ public class TableCalibration : MonoBehaviour{
 
 void Update(){
         // Needed for haptic feedback
-        //controllerdevice = SteamVR_Controller.Input((int)trackedObj.index);
+        controllerdevice = SteamVR_Controller.Input((int)trackedObj.index);
 
-        if (LLset && URset)
-        { // Calibration successful
+        if (LLset && URset){ // Calibration successful
             Debug.Log("Plane calibration: completed successfully.");
 
             // Tell setupScene that the calibration has been completed
             // and load / unload corresponding scenes
             setupScene.calibrationDone(lowerLeft, upperRight);
 
-            //Write Textfile
+            // Write text file
             string[] CalibPos = { " " + lowerLeft.x, " " + lowerLeft.y, " " + lowerLeft.z, " " + upperRight.x, " " + upperRight.y, " " + upperRight.z };
-            using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"C:\Users\projekt\Documents\AR2_Composer_Mono\Main\Assets\CalibPos.txt"))
-            {
-                foreach (string line in CalibPos)
-                {
-                    // If the line doesn't contain the word 'Second', write the line to the file.
-
+            using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"C:\Users\projekt\Documents\AR2_Composer_Mono\Main\Assets\CalibPos.txt")){
+                foreach (string line in CalibPos){
                     file.WriteLine(line);
-
                 }
             }
-
 
             if (calibrateBoth){
                 setupScene.setState((int)setupScene.state.poseAndPlaneCalibDone);
