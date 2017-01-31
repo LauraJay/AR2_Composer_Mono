@@ -68,26 +68,26 @@ public class readInNetworkData : MonoBehaviour {
     public void sendTCPstatus(int status){
         if (socketReady) { 
             theStream.Write(System.BitConverter.GetBytes(status), 0, 4);
-            Debug.Log("Status sent: " + status);
+            Debug.Log("[TCP] Status sent: " + Enum.GetName(typeof(TCPstatus), status));
         }
         else
-            Debug.LogError("Failed to send status, because the socket is not ready: " + status);
+            Debug.LogError("[TCP] Failed to send status, because the socket is not ready: " + status);
     }
 
     // Receive status over TCP according to TCPstatus enum
     public int receiveTCPstatus(){
         if (socketReady){
             while (!theStream.DataAvailable){
-                Debug.Log("Waiting for status to be received.");
+                Debug.Log("[TCP] Waiting for status to be received.");
                 System.Threading.Thread.Sleep(1000);
             }
             byte[] receivedBytes = new byte[4];
             theStream.Read(receivedBytes, 0, 4);
             int status = System.BitConverter.ToInt32(receivedBytes, 0);
-            Debug.Log("Status received: " + status);
+            Debug.Log("[TCP] Status received: " + Enum.GetName(typeof(TCPstatus), status));
             return status;
         }
-        Debug.LogError("Failed to receive status, because the socket is not ready.");
+        Debug.LogError("[TCP] Failed to receive status, because the socket is not ready.");
         return -1;
     }
 

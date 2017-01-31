@@ -87,17 +87,34 @@ void Update(){
         // Needed for haptic feedback
         //controllerdevice = SteamVR_Controller.Input((int)trackedObj.index);
 
-        if (LLset && URset){ // Calibration successful
+        if (LLset && URset)
+        { // Calibration successful
             Debug.Log("Plane calibration: completed successfully.");
 
             // Tell setupScene that the calibration has been completed
             // and load / unload corresponding scenes
             setupScene.calibrationDone(lowerLeft, upperRight);
+
+            //Write Textfile
+            string[] CalibPos = { " " + lowerLeft.x, " " + lowerLeft.y, " " + lowerLeft.z, " " + upperRight.x, " " + upperRight.y, " " + upperRight.z };
+            using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"C:\Users\projekt\Documents\AR2_Composer_Mono\Main\Assets\CalibPos.txt"))
+            {
+                foreach (string line in CalibPos)
+                {
+                    // If the line doesn't contain the word 'Second', write the line to the file.
+
+                    file.WriteLine(line);
+
+                }
+            }
+
+
             if (calibrateBoth){
                 setupScene.setState((int)setupScene.state.poseAndPlaneCalibDone);
                 SceneManager.UnloadSceneAsync(SceneManager.GetSceneByName("doPlaneCalibInVS"));
                 SceneManager.LoadScene("doPoseCalibInVS", LoadSceneMode.Additive);
-            }else{
+            }
+            else if(networkData.receiveTCPstatus() == (int)readInNetworkData.TCPstatus.planeCalibDone){
                 SceneManager.UnloadSceneAsync(SceneManager.GetSceneByName("doPlaneCalibInVS"));
                 SceneManager.LoadScene("CalibDone", LoadSceneMode.Additive);
             }
@@ -107,6 +124,6 @@ void Update(){
 
             // Disable this script
             this.enabled = false;
-        }
+        }                
     }
 }

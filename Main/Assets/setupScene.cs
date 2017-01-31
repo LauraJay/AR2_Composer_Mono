@@ -45,12 +45,41 @@ public class setupScene : MonoBehaviour{
         currentState = state;
         statusChanged = true;
         doRender = false;
-        Debug.Log("State changed to " + state + ".");
+        Debug.Log("[STATE LOOP] State changed to: " + Enum.GetName(typeof(state), state));
     }
 
     // Is called by the menu that lets the user set the scale
     public void setScale(int scale){
         markerScale = 10 / (float)scale;
+    }
+
+    public void noCalibration(){
+        Debug.Log("No Calibration is done. Loading old information.");
+
+        string[] CalibData = System.IO.File.ReadAllLines(@"C:\Users\projekt\Documents\AR2_Composer_Mono\Main\Assets\CalibPos.txt");
+        if (CalibData.Length != 6){
+            Debug.LogError("No calibration has been selected, but no valid text file has been read.");
+            SceneManager.UnloadSceneAsync(SceneManager.GetSceneByName("firstmenu"));
+            SceneManager.LoadScene("secondmenu", LoadSceneMode.Additive);
+        }
+        else{
+            Vector3 lowerLeft = new Vector3();
+            Vector3 upperRight = new Vector3();
+            lowerLeft.x = float.Parse(CalibData[0]);
+            lowerLeft.y = float.Parse(CalibData[1]);
+            lowerLeft.z = float.Parse(CalibData[2]);
+            upperRight.x = float.Parse(CalibData[3]);
+            upperRight.y = float.Parse(CalibData[4]);
+            upperRight.z = float.Parse(CalibData[5]);
+
+            Debug.Log("[LOADING CALIBRATION DATA] lowerLeft: " + lowerLeft);
+            Debug.Log("[LOADING CALIBRATION DATA] upperRight: " + upperRight);
+
+            calibrationDone(lowerLeft, upperRight);
+
+            SceneManager.UnloadSceneAsync(SceneManager.GetSceneByName("firstmenu"));
+            SceneManager.LoadScene("thirdmenu", LoadSceneMode.Additive);
+        }
     }
 
     // Is called when table calibration finishes (in TableCalibration.cs)
@@ -74,7 +103,7 @@ public class setupScene : MonoBehaviour{
         calibDone = true;
     }
 
-    void Start(){
+    void Start() {
         // Initialization
         calibDone = false;
         tableCalib.enabled = false;
@@ -86,7 +115,7 @@ public class setupScene : MonoBehaviour{
 
         // Create markers (cubes)
         GameObject MarkerMaster = GameObject.Find("MarkerMaster");
-        for (int i = 0; i < markersToRender; i++){
+        for (int i = 0; i < markersToRender; i++) {
             markerCubes[i] = Instantiate(MarkerMaster);
             markerCubes[i].transform.SetParent(parent.transform);
             markerCubes[i].SetActive(false);
@@ -97,10 +126,9 @@ public class setupScene : MonoBehaviour{
         MarkerMaster.SetActive(false);
         networkData = gameObject.GetComponent<readInNetworkData>();
 
-        for (int i = 0; i < Camera.allCamerasCount; i++){
-            Camera.allCameras[i].fieldOfView = 74;
-        }
-
+        //for (int i = 0; i < Camera.allCamerasCount; i++) {
+        //    Camera.allCameras[i].fieldOfView = 74;
+        //}
     }
 
     // (Re-)Initialize marker that has been deleted
@@ -196,6 +224,7 @@ public class setupScene : MonoBehaviour{
                     break;
                 case (int)state.poseAndPlaneCalibDone:
                     Debug.Log("Entered state: poseAndPlaneCalibDone");
+                   
                     if (networkData.receiveTCPstatus() == (int)readInNetworkData.TCPstatus.poseCalibDone){
                         SceneManager.UnloadSceneAsync(SceneManager.GetSceneByName("doPoseCalibInVS"));
                         SceneManager.LoadScene("CalibDone", LoadSceneMode.Additive);

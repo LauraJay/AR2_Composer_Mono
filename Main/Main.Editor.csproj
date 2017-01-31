@@ -153,6 +153,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\A2Composer Assets\shader\ovTexture.shader" />
+    <None Include="Assets\CalibPos.txt" />
     <None Include="Assets\LeapMotion\Dependencies.txt" />
     <None Include="Assets\LeapMotion\README_BEFORE_UPDATING.txt" />
     <None Include="Assets\LeapMotion\Resources\LeapCG.cginc" />

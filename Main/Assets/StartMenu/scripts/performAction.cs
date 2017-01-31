@@ -17,4 +17,8 @@ public class performAction : MonoBehaviour {
         FindObjectOfType<setupScene>().setScale((int)scaleSlider.value);
     }
 
+    public void noCalibration(){
+        FindObjectOfType<setupScene>().noCalibration();
+    }
+
 }
