@@ -1,7 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.SceneManagement;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
 public class performAction : MonoBehaviour {
@@ -20,5 +17,4 @@ public class performAction : MonoBehaviour {
     public void noCalibration(){
         FindObjectOfType<setupScene>().noCalibration();
     }
-
 }

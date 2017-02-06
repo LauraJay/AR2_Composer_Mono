@@ -39,6 +39,13 @@ public class readInNetworkData : MonoBehaviour {
         return markers;
     }
 
+    // Is called by setupScene.cs
+    public void resetMarkerArray(){
+        for(int i = 0; i < markers.Length; i++){
+            markers[i] = null;
+        }
+    }
+
     // Initialization
     void Start(){
         readBufferLength = bytesPerMarker * markersToReceive + 4; // +4 because ID=-1 marks end of frame
@@ -106,7 +113,7 @@ public class readInNetworkData : MonoBehaviour {
             int curID = System.BitConverter.ToInt32(readBuffer, i); // Convert the marker ID
             if (curID == -1){ // End of frame reached?
                 if(printMarkerDebugInfo)
-                    Debug.Log("Last masker reached, suspending loop for current frame " + frameCounter + ".");
+                    Debug.Log("Last marker reached, suspending loop for current frame " + frameCounter + ".");
                 frameCounter++; // This is counted even if showMarkerDebugInfo is false, so that it can be enabled at any time
                 markers[i / bytesPerMarker + 1] = new Marker(-1, 0.0f, 0.0f, 0.0f, 0); // Set last marker as EOF (end of frame)
                 break;                                                                 // and suspend loop

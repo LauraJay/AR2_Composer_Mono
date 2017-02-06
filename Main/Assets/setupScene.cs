@@ -108,6 +108,7 @@ public class setupScene : MonoBehaviour{
         calibDone = false;
         tableCalib.enabled = false;
         markerCubes = new GameObject[markersToRender];
+        networkMarkersPrevFrame = new Marker[0];
 
         // Create parent object (plane and cubes are attached to this)
         parent = new GameObject();
@@ -125,18 +126,16 @@ public class setupScene : MonoBehaviour{
         }
         MarkerMaster.SetActive(false);
         networkData = gameObject.GetComponent<readInNetworkData>();
-
-        //for (int i = 0; i < Camera.allCamerasCount; i++) {
-        //    Camera.allCameras[i].fieldOfView = 74;
-        //}
     }
 
     // (Re-)Initialize marker that has been deleted
     private GameObject initializeMarker(int index){
-        GameObject marker = GameObject.CreatePrimitive(PrimitiveType.Cube);
+        GameObject MarkerMaster = GameObject.Find("MarkerMaster");
+        GameObject marker = Instantiate(MarkerMaster);
         marker.transform.SetParent(parent.transform);
         marker.SetActive(false);
         marker.transform.name = "Marker" + index;
+        marker.transform.FindChild("Pivot").transform.FindChild("Cube").GetComponent<Renderer>().material.color = new Color(0, 255, 0);
         marker.transform.localScale = new Vector3(markerScale, markerScale, markerScale);
         return marker;
     }
@@ -167,8 +166,7 @@ public class setupScene : MonoBehaviour{
 
     private void renderMarkersFromTCP(){
         if (markerArraySet){
-            // Pull markers for current frame from
-            // readInNetworkData script
+            // Pull markers for current frame from readInNetworkData script
             networkMarkers = networkData.getMarkers();
 
             for (int i = 0; i < networkMarkers.Length; i++){
@@ -191,23 +189,27 @@ public class setupScene : MonoBehaviour{
                 else
                     markerCubes[i].SetActive(false);
             }
-            markerArraySet = false;
-
-            // Check if any markers have been deleted
-            for (int j = 0; j < networkMarkersPrevFrame.Length - 1; j++){
-                if (networkMarkersPrevFrame[j] != null && networkMarkers[j] == null)
-                    markerCubes[j] = initializeMarker(j); //Marker has been deleted, reinitialize GameObject
-            }
-            // Remember markers from previous frame to
-            // determine which ones have been deleted
+            
+            // Remember markers from previous frame to determine which ones have been deleted
             networkMarkersPrevFrame = networkMarkers;
+            
+            markerArraySet = false;
         }
+
+        // Check if any markers have been deleted
+        for (int j = 0; j < networkMarkersPrevFrame.Length; j++){
+            if (networkMarkersPrevFrame[j] != null && networkMarkers[j] == null){
+                markerCubes[j] = initializeMarker(j); //Marker has been deleted, reinitialize GameObject
+            }
+        }
+
+        // Trigger the marker array in readInNetworkData() to be cleared
+        networkData.resetMarkerArray();
     }
 
     void Update(){
-        if(doRender)
+        if (doRender)
             renderMarkersFromTCP();
-        // ToDo: control this from the menus
         else if (statusChanged) {
             statusChanged = false;
             switch (currentState){

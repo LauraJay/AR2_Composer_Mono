@@ -37,7 +37,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.18028378, g: 0.22571412, b: 0.30692285, a: 1}
+  m_IndirectSpecularColor: {r: 0.16788375, g: 0.21073635, b: 0.28994125, a: 1}
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
@@ -584,9 +584,7 @@ MonoBehaviour:
     button. \n\t\tDuring this procedure the AruCo-marker on the controller has to
     be visible\n\t\tto the overhead camera.\n\n(2)\tRepeat step (1) at the UPPER RIGHT
     POSITION.\n\nNote: \tAs soon as one position has been calibrated successfully,
-    you should feel\n\t\t\tthree short haptic pulses on the controller. In case something
-    went wrong,\n\t\t\tone long pulse indicates that the position must be calibrated
-    again."
+    you'll feel a\n\t\t\thaptic pulses on the controller."
 --- !u!222 &1515295497
 CanvasRenderer:
   m_ObjectHideFlags: 0

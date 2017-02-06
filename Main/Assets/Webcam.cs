@@ -27,6 +27,8 @@ public class Webcam : MonoBehaviour {
         //rawImage.material.mainTexture = leftCam;
         rend.materials[0].mainTexture = leftCam;
 
+       // RenderTexture rendertext = (RenderTexture)rend.materials[0].mainTexture;
+
         leftCam.Play();
 
         // Plane Position: x = 0.1, y = 0.01, z = 0.75 scale x= 0.16, scale y = 0.6 z = 0.1
