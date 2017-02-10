@@ -22,7 +22,7 @@ public class setupScene : MonoBehaviour{
     // This is overwritten by inspector input
     [Header("Scene Settings")]
     // Maximum number of markers that can be displayed (virtual markers)
-    public int markersToRender = 256;
+    private int markersToRender;
 
     // Global scale of each marker to fit size of virtual to real markers
     public float markerScale = 0.05f;    
@@ -109,6 +109,7 @@ public class setupScene : MonoBehaviour{
         tableCalib.enabled = false;
         markerCubes = new GameObject[markersToRender];
         networkMarkersPrevFrame = new Marker[0];
+        markersToRender = networkData.getMarkersToReceive();
 
         // Create parent object (plane and cubes are attached to this)
         parent = new GameObject();
@@ -126,18 +127,6 @@ public class setupScene : MonoBehaviour{
         }
         MarkerMaster.SetActive(false);
         networkData = gameObject.GetComponent<readInNetworkData>();
-    }
-
-    // (Re-)Initialize marker that has been deleted
-    private GameObject initializeMarker(int index){
-        GameObject MarkerMaster = GameObject.Find("MarkerMaster");
-        GameObject marker = Instantiate(MarkerMaster);
-        marker.transform.SetParent(parent.transform);
-        marker.SetActive(false);
-        marker.transform.name = "Marker" + index;
-        marker.transform.FindChild("Pivot").transform.FindChild("Cube").GetComponent<Renderer>().material.color = new Color(0, 255, 0);
-        marker.transform.localScale = new Vector3(markerScale, markerScale, markerScale);
-        return marker;
     }
 
     // Set whether the marker array has been filled
@@ -171,9 +160,9 @@ public class setupScene : MonoBehaviour{
 
             for (int i = 0; i < networkMarkers.Length; i++){
                 Marker cur = networkMarkers[i];
-                if (cur == null)
+                if (cur == null) // Not necessary any more, but can't hurt
                     break;
-                if (cur.getID() == -1)
+                if (cur.getID() == -2) // End of frame reached
                     break;
 
                 // This makes no sense, but is a temporary fix
@@ -189,22 +178,8 @@ public class setupScene : MonoBehaviour{
                 else
                     markerCubes[i].SetActive(false);
             }
-            
-            // Remember markers from previous frame to determine which ones have been deleted
-            networkMarkersPrevFrame = networkMarkers;
-            
             markerArraySet = false;
         }
-
-        // Check if any markers have been deleted
-        for (int j = 0; j < networkMarkersPrevFrame.Length; j++){
-            if (networkMarkersPrevFrame[j] != null && networkMarkers[j] == null){
-                markerCubes[j] = initializeMarker(j); //Marker has been deleted, reinitialize GameObject
-            }
-        }
-
-        // Trigger the marker array in readInNetworkData() to be cleared
-        networkData.resetMarkerArray();
     }
 
     void Update(){

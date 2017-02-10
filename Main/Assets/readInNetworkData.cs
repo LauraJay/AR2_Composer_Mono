@@ -40,10 +40,8 @@ public class readInNetworkData : MonoBehaviour {
     }
 
     // Is called by setupScene.cs
-    public void resetMarkerArray(){
-        for(int i = 0; i < markers.Length; i++){
-            markers[i] = null;
-        }
+    public int getMarkersToReceive(){
+        return markersToReceive;
     }
 
     // Initialization
@@ -111,14 +109,19 @@ public class readInNetworkData : MonoBehaviour {
     private void interpretTCPMarkerData(){
         for (int i = 0; i < readBufferLength; i += bytesPerMarker){
             int curID = System.BitConverter.ToInt32(readBuffer, i); // Convert the marker ID
-            if (curID == -1){ // End of frame reached?
+            if (curID == 0 && printMarkerDebugInfo)
+                Debug.Log("[READ IN NETWORK DATA] Start of frame " + frameCounter + ".");
+            if (curID == -1) { // Marker is empty
+                markers[i / bytesPerMarker] = new Marker(-1, 0.0f, 0.0f, 0.0f, 0);
+            }
+            if (curID == -2){ // End of frame reached
                 if(printMarkerDebugInfo)
-                    Debug.Log("Last marker reached, suspending loop for current frame " + frameCounter + ".");
+                    Debug.Log("[READ IN NETWORK DATA] Last marker reached, suspending loop for current frame.");
                 frameCounter++; // This is counted even if showMarkerDebugInfo is false, so that it can be enabled at any time
-                markers[i / bytesPerMarker + 1] = new Marker(-1, 0.0f, 0.0f, 0.0f, 0); // Set last marker as EOF (end of frame)
+                markers[i / bytesPerMarker + 1] = new Marker(-2, 0.0f, 0.0f, 0.0f, 0); // Set last marker as EOF (end of frame)
                 break;                                                                 // and suspend loop
-            }else if (curID < 0 || curID > markersToReceive){ // For debugging, this should not happen during normal operation
-                Debug.LogError("Marker ID not valid: " + curID);
+            }else if (curID < -2 || curID > markersToReceive){ // For debugging, this should not happen during normal operation
+                Debug.LogError("[READ IN NETWORK DATA] Marker ID not valid: " + curID);
             }else{ // ID is valid and does not mark the end of the frame
                 float curPosX = System.BitConverter.ToSingle(readBuffer, i + 4); // Convert the x-position
                 float curPosY = System.BitConverter.ToSingle(readBuffer, i + 8); // Convert the y-position
