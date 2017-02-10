@@ -63,9 +63,9 @@ public class readInNetworkData : MonoBehaviour {
             mySocket = new TcpClient(Host, Port);
             theStream = mySocket.GetStream();
             socketReady = true;
-            Debug.Log("Socket set up successfully.");
+            Debug.Log("[TCP] Socket set up successfully.");
         }catch (Exception e){
-            Debug.LogError("Socket setup failed. Error: " + e);
+            Debug.LogError("[TCP] Socket setup failed. Error: " + e);
         }
     }
 

@@ -141,7 +141,7 @@ public class setupScene : MonoBehaviour{
         float xMax = calibratedUR.x;
         float newX = xMin + position.x * (xMax - xMin);
 
-        // Linear interpolation of Y        
+        // Linear interpolation of Y
         float newY = (calibratedUR.y + calibratedLL.y) / 2;
         newY += markerHeightOffset;
 
@@ -161,19 +161,25 @@ public class setupScene : MonoBehaviour{
             for (int i = 0; i < networkMarkers.Length; i++){
                 Marker cur = networkMarkers[i];
                 if (cur == null) // Not necessary any more, but can't hurt
-                    break;
+                    continue;
+                if (cur.getID() == -1){
+                    markerCubes[i].SetActive(false);
+                    continue;
+                }
                 if (cur.getID() == -2) // End of frame reached
                     break;
 
                 // This makes no sense, but is a temporary fix
                 // for a problem perhaps caused by the Vive HMD
                 Vector3 position = new Vector3(1 - cur.getPosY(), 0.0f, 1 - cur.getPosX());
+
                 if (calibDone)
                     markerCubes[i].transform.position = getCalibratedMarkerPos(position);
                 else
                     markerCubes[i].transform.position = position;
                 markerCubes[i].transform.rotation = Quaternion.Euler(0.0f, cur.getAngle(), 0.0f);
-                if (cur.getStatus() == 1)
+
+                if (cur.getStatus() == 1) // Is marker visible?
                     markerCubes[i].SetActive(true);
                 else
                     markerCubes[i].SetActive(false);
