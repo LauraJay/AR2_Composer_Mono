@@ -18,6 +18,9 @@ public class buttonPressed : MonoBehaviour {
     void Start () {
         xButtonIsPressed = false;
         yButtonIsPressed = false;
+
+        Debug.Log("GAMEOBJECT: " + gameObject.name);
+
 	}
 
   public void xIsPressed()

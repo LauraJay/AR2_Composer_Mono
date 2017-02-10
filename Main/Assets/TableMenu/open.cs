@@ -7,8 +7,8 @@ using System.Xml.Serialization;
 using System.IO;
 
 public class open : MonoBehaviour {
-	public GameObject openDialog;
-	public GameObject initCube;
+	//public GameObject openDialog;
+	public GameObject markerMaster;
 	//public GameObject initPos;
 	private String projectPath;
 	//public bool visible;
@@ -24,18 +24,18 @@ public class open : MonoBehaviour {
 
 	void crawlXML( XmlNodeList nodes ){
 		for(int i=0; i< nodes.Count; i++){
-			//Debug.Log(nodes[i].Name);
-			if (nodes [i].Name.Contains ("Marker")) {
-				Debug.Log ("CUBE FOUND BITCH");
-				GameObject tmp = Instantiate(initCube);
-				String tmpName = "Marker" + i;
-				tmp.name = tmpName;
-				tmp.transform.parent = GameObject.Find ("TableObjects").transform;
+            String tmpName = "";
+            //Debug.Log(nodes[i].Name);
+            if (nodes [i].Name.Contains ("Marker")) {
+				GameObject tmp = Instantiate(markerMaster);
+               
+				//tmp.name = tmpName;
+				tmp.transform.parent = GameObject.Find ("TableObject").transform;
                 tmp.transform.parent.gameObject.SetActive(true);
               //  GameObject tmpPos = Instantiate (initPos);
 			//	tmpPos.transform.parent = tmp.transform;
 					
-				tmp.SetActive (true);
+				//tmp.SetActive (true);
 				//tmpPos.SetActive (true);
 				float PosX=0.0f;
 				float PosY=0.0f; 
@@ -49,8 +49,17 @@ public class open : MonoBehaviour {
 				float ScaleY = 0.0f;
 				float ScaleZ = 0.0f;
 
+                bool setActive = false;
+
 				foreach (XmlNode node in nodes[i]) {
-					if (node.Name == "PositionX") {
+
+                    if (node.Name == "Name")
+                    {
+                        tmpName = node.InnerText;
+                        //Debug.Log(node.InnerText + ", " + PosX);
+                    }
+
+                    if (node.Name == "PositionX") {
 						PosX = float.Parse (node.InnerText,System.Globalization.CultureInfo.CurrentCulture); 
 						//Debug.Log(node.InnerText + ", " + PosX);
 					}
@@ -85,6 +94,17 @@ public class open : MonoBehaviour {
 						ScaleZ = float.Parse (node.InnerText,System.Globalization.CultureInfo.InvariantCulture);
 						if (ScaleZ == 0) ScaleX = 1;
 					}
+                    if (node.Name == "Active")
+                    {
+                        if (node.InnerText == "true")
+                        {
+                            setActive = true;
+                        }
+                        else
+                            setActive = false;
+                    }
+
+                    tmp.name = tmpName;
 
 					tmp.transform.localPosition = (new Vector3(PosX,PosY,PosZ));
 
@@ -92,9 +112,10 @@ public class open : MonoBehaviour {
                      tmp.transform.localEulerAngles = (new Vector3(RotX, RotY, RotZ));
                    // tmp.transform.
                     tmp.transform.localScale = (new Vector3 (ScaleX, ScaleY, ScaleZ));
-				//	tmpPos.transform.localPosition = new Vector3(0,0,0);
-					//tmpPos.transform.localRotation = tmp.transform.localRotation;
-					//tmp.GetComponent<MatchMode> ().matchMode = true;
+                    //	tmpPos.transform.localPosition = new Vector3(0,0,0);
+                    //tmpPos.transform.localRotation = tmp.transform.localRotation;
+                    //tmp.GetComponent<MatchMode> ().matchMode = true;
+                    tmp.SetActive(setActive);
                     tmp.transform.FindChild("Pivot").transform.FindChild("Plane").GetComponent<MatchMode>().matchMode = true;
 
 
@@ -113,12 +134,12 @@ public class open : MonoBehaviour {
 
 	public void openXml(String filePath){
 		Debug.Log ("Distroying current active markers..");
-		GameObject marker = GameObject.Find ("TableObjects");
-		foreach (Transform child in marker.transform)
+		GameObject tableObject = GameObject.Find ("TableObject");
+		foreach (Transform child in tableObject.transform)
 		{
-			//if (child.name.Contains ("initCube")) {
+			if (child.name.Contains ("Marker")) {
 				Destroy (child.gameObject);
-			//}
+			}
 		}
 		Debug.Log ("..done.");
 

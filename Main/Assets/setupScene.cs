@@ -22,7 +22,7 @@ public class setupScene : MonoBehaviour{
     // This is overwritten by inspector input
     [Header("Scene Settings")]
     // Maximum number of markers that can be displayed (virtual markers)
-    public int markersToRender = 256;
+    private int markersToRender;
 
     // Global scale of each marker to fit size of virtual to real markers
     public float markerScale = 0.05f;    
@@ -90,6 +90,7 @@ public class setupScene : MonoBehaviour{
 
         // Create plane (table surface)
         table = GameObject.CreatePrimitive(PrimitiveType.Plane);
+        table.name = "TablePlane";
         table.transform.parent = parent.transform;
         float width = Math.Abs(calibratedUR.x - calibratedLL.x);
         float height = Math.Abs(calibratedUR.z - calibratedLL.z);
@@ -100,6 +101,13 @@ public class setupScene : MonoBehaviour{
                                       );
         table.transform.position = position;
         table.transform.localScale = new Vector3(width / 10, 1, height / 10);
+
+        GameObject tableMenue = GameObject.Find("TableMenuParent");
+        tableMenue.transform.parent = table.transform;
+
+        tableMenue.transform.position = new Vector3(position.x+width/2, position.y, position.z + height/2); 
+        
+
         calibDone = true;
     }
 
@@ -109,6 +117,7 @@ public class setupScene : MonoBehaviour{
         tableCalib.enabled = false;
         markerCubes = new GameObject[markersToRender];
         networkMarkersPrevFrame = new Marker[0];
+        markersToRender = networkData.getMarkersToReceive();
 
         // Create parent object (plane and cubes are attached to this)
         parent = new GameObject();
@@ -121,23 +130,11 @@ public class setupScene : MonoBehaviour{
             markerCubes[i].transform.SetParent(parent.transform);
             markerCubes[i].SetActive(false);
             markerCubes[i].transform.name = "Marker" + i;
-            markerCubes[i].transform.FindChild("Pivot").transform.FindChild("Cube").GetComponent<Renderer>().material.color = new Color(0, 255, 0);
+           // markerCubes[i].transform.FindChild("Pivot").transform.FindChild("Cube").GetComponent<Renderer>().material.color = new Color(0, 255, 0);
             markerCubes[i].transform.localScale = new Vector3(markerScale, markerScale, markerScale);
         }
         MarkerMaster.SetActive(false);
         networkData = gameObject.GetComponent<readInNetworkData>();
-    }
-
-    // (Re-)Initialize marker that has been deleted
-    private GameObject initializeMarker(int index){
-        GameObject MarkerMaster = GameObject.Find("MarkerMaster");
-        GameObject marker = Instantiate(MarkerMaster);
-        marker.transform.SetParent(parent.transform);
-        marker.SetActive(false);
-        marker.transform.name = "Marker" + index;
-        marker.transform.FindChild("Pivot").transform.FindChild("Cube").GetComponent<Renderer>().material.color = new Color(0, 255, 0);
-        marker.transform.localScale = new Vector3(markerScale, markerScale, markerScale);
-        return marker;
     }
 
     // Set whether the marker array has been filled
@@ -152,7 +149,7 @@ public class setupScene : MonoBehaviour{
         float xMax = calibratedUR.x;
         float newX = xMin + position.x * (xMax - xMin);
 
-        // Linear interpolation of Y        
+        // Linear interpolation of Y
         float newY = (calibratedUR.y + calibratedLL.y) / 2;
         newY += markerHeightOffset;
 
@@ -171,40 +168,32 @@ public class setupScene : MonoBehaviour{
 
             for (int i = 0; i < networkMarkers.Length; i++){
                 Marker cur = networkMarkers[i];
-                if (cur == null)
-                    break;
-                if (cur.getID() == -1)
+                if (cur == null) // Not necessary any more, but can't hurt
+                    continue;
+                if (cur.getID() == -1){
+                    markerCubes[i].SetActive(false);
+                    continue;
+                }
+                if (cur.getID() == -2) // End of frame reached
                     break;
 
                 // This makes no sense, but is a temporary fix
                 // for a problem perhaps caused by the Vive HMD
                 Vector3 position = new Vector3(1 - cur.getPosY(), 0.0f, 1 - cur.getPosX());
+
                 if (calibDone)
                     markerCubes[i].transform.position = getCalibratedMarkerPos(position);
                 else
                     markerCubes[i].transform.position = position;
                 markerCubes[i].transform.rotation = Quaternion.Euler(0.0f, cur.getAngle(), 0.0f);
-                if (cur.getStatus() == 1)
+
+                if (cur.getStatus() == 1) // Is marker visible?
                     markerCubes[i].SetActive(true);
                 else
                     markerCubes[i].SetActive(false);
             }
-            
-            // Remember markers from previous frame to determine which ones have been deleted
-            networkMarkersPrevFrame = networkMarkers;
-            
             markerArraySet = false;
         }
-
-        // Check if any markers have been deleted
-        for (int j = 0; j < networkMarkersPrevFrame.Length; j++){
-            if (networkMarkersPrevFrame[j] != null && networkMarkers[j] == null){
-                markerCubes[j] = initializeMarker(j); //Marker has been deleted, reinitialize GameObject
-            }
-        }
-
-        // Trigger the marker array in readInNetworkData() to be cleared
-        networkData.resetMarkerArray();
     }
 
     void Update(){

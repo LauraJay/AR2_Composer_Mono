@@ -36,7 +36,7 @@ public class save : MonoBehaviour {
 		//EditorSceneManager.SaveScene( activeScene );
 		//EditorApplication.SaveAssets();
 
-		UnityEngine.Object[] objects = GameObject.FindObjectsOfType(typeof(GameObject)); //returns Object[]
+		//UnityEngine.Object[] objects = GameObject.FindObjectsOfType(typeof(GameObject)); //returns Object[]
 		doc = new XmlDocument();
 		doc.LoadXml("<AR2COMPOSER_SCENE>" +
 					"<time>" +  
@@ -49,9 +49,9 @@ public class save : MonoBehaviour {
 		Console.WriteLine("Display the modified XML document...");
 		Console.WriteLine(doc.OuterXml);
 
-
-		//Serialize (objects, filepath); 
-		traverseHirarchy(GameObject.Find("TableObjects"), root);
+        GameObject tableObject = GameObject.Find("TableObject");
+        //Serialize (objects, filepath); 
+        traverseHirarchy(tableObject, root);
 		Debug.Log ("Objects crawled!");
 		Debug.Log ("Path: " + filepath);
 		doc.Save (filepath);
@@ -67,65 +67,71 @@ public class save : MonoBehaviour {
 
 
 	void traverseHirarchy(GameObject obj, XmlNode parentNode){
-		
-		//if (obj.transform.childCount > 0) {
-			Debug.Log (obj.name + " Mother of Childs");
+
+        //if (obj.transform.childCount > 0) {
+        if (!obj.name.Contains("TablePlane"))
+        {
+            Debug.Log(obj.name + " Mother of Childs");
 
 
-		XmlNode newElem = doc.CreateNode("element", obj.name , "");  
-			
-			
+            XmlNode newElem = doc.CreateNode("element", obj.name, "");
 
-		XmlNode newPosX = doc.CreateNode("element", "PositionX" , "");  
-		XmlNode newPosY = doc.CreateNode("element", "PositionY" , "");  
-		XmlNode newPosZ = doc.CreateNode("element", "PositionZ" , "");  
+            XmlNode newName = doc.CreateNode("element", "Name", "");
 
-		XmlNode newRotationX = doc.CreateNode("element", "RotationX" , ""); 
-		XmlNode newRotationY = doc.CreateNode("element", "RotationY" , ""); 
-		XmlNode newRotationZ = doc.CreateNode("element", "RotationZ" , ""); 
+            XmlNode newPosX = doc.CreateNode("element", "PositionX", "");
+            XmlNode newPosY = doc.CreateNode("element", "PositionY", "");
+            XmlNode newPosZ = doc.CreateNode("element", "PositionZ", "");
 
-		XmlNode newScaleX = doc.CreateNode("element", "ScaleX" , ""); 
-		XmlNode newScaleY = doc.CreateNode("element", "ScaleY" , ""); 
-		XmlNode newScaleZ = doc.CreateNode("element", "ScaleZ" , ""); 
+            XmlNode newRotationX = doc.CreateNode("element", "RotationX", "");
+            XmlNode newRotationY = doc.CreateNode("element", "RotationY", "");
+            XmlNode newRotationZ = doc.CreateNode("element", "RotationZ", "");
 
-		newPosX.InnerText = obj.transform.localPosition.x.ToString();
-		newPosY.InnerText = obj.transform.localPosition.y.ToString();
-		newPosZ.InnerText = obj.transform.localPosition.z.ToString() ;
-        /*
-		newRotationX.InnerText = obj.transform.localRotation.x.ToString();
-		newRotationY.InnerText = obj.transform.localRotation.y.ToString(); 
-		newRotationZ.InnerText = obj.transform.localRotation.z.ToString() ;
-        */
+            XmlNode newScaleX = doc.CreateNode("element", "ScaleX", "");
+            XmlNode newScaleY = doc.CreateNode("element", "ScaleY", "");
+            XmlNode newScaleZ = doc.CreateNode("element", "ScaleZ", "");
 
+            XmlNode active = doc.CreateNode("element", "Active", "");
 
-        newRotationX.InnerText = obj.transform.localEulerAngles.x.ToString();
-        newRotationY.InnerText = obj.transform.localEulerAngles.y.ToString();
-        newRotationZ.InnerText = obj.transform.localEulerAngles.z.ToString();
-        // Debug.Log("rotation x:" + newRotationX.InnerText + " y:" + newRotationY.InnerText + " z:" + newRotationZ.InnerText);
+            newName.InnerText = obj.name;
+            newPosX.InnerText = obj.transform.localPosition.x.ToString();
+            newPosY.InnerText = obj.transform.localPosition.y.ToString();
+            newPosZ.InnerText = obj.transform.localPosition.z.ToString();
 
-        newScaleX.InnerText = obj.transform.localScale.x.ToString();
-		newScaleY.InnerText = obj.transform.localScale.y.ToString();
-		newScaleZ.InnerText = obj.transform.localScale.z.ToString() ;
+            newRotationX.InnerText = obj.transform.localEulerAngles.x.ToString();
+            newRotationY.InnerText = obj.transform.localEulerAngles.y.ToString();
+            newRotationZ.InnerText = obj.transform.localEulerAngles.z.ToString();
 
-			foreach( Transform child in obj.transform)
-			{
-			//if(child.name == "Cube" || child.name == "Cube")
-			traverseHirarchy(child.gameObject,newElem );
-			}
-			newElem.AppendChild (newPosX);
-			newElem.AppendChild (newPosY);
-			newElem.AppendChild (newPosZ);
+            newScaleX.InnerText = obj.transform.localScale.x.ToString();
+            newScaleY.InnerText = obj.transform.localScale.y.ToString();
+            newScaleZ.InnerText = obj.transform.localScale.z.ToString();
 
-			newElem.AppendChild (newRotationX);
-			newElem.AppendChild (newRotationY);
-			newElem.AppendChild (newRotationZ);
+            active.InnerText = obj.activeSelf.ToString();
 
-			newElem.AppendChild (newScaleX);
-			newElem.AppendChild (newScaleY);
-			newElem.AppendChild (newScaleZ);
+            foreach (Transform child in obj.transform)
+            {
+                if (!obj.name.Contains("TablePlane"))
+                    traverseHirarchy(child.gameObject, newElem);
+            }
 
-			parentNode.AppendChild(newElem);
+            newElem.AppendChild(newName);
 
+            newElem.AppendChild(newPosX);
+            newElem.AppendChild(newPosY);
+            newElem.AppendChild(newPosZ);
+
+            newElem.AppendChild(newRotationX);
+            newElem.AppendChild(newRotationY);
+            newElem.AppendChild(newRotationZ);
+
+            newElem.AppendChild(newScaleX);
+            newElem.AppendChild(newScaleY);
+            newElem.AppendChild(newScaleZ);
+
+            newElem.AppendChild(active);
+
+            parentNode.AppendChild(newElem);
+
+        }
 
 	}
 

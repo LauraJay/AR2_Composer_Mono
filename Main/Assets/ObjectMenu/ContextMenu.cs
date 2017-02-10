@@ -24,7 +24,7 @@ public class ContextMenu : MonoBehaviour
         textArea = gameObject.GetComponent<Text>();
         contextMenu = textArea.transform.parent.gameObject;
         canvasTransform = contextMenu.transform.parent.gameObject;
-        cube = canvasTransform.transform.parent.FindChild("Pivot").gameObject;
+        cube = canvasTransform.transform.parent.transform.parent.FindChild("Pivot").gameObject;
         marker = cube.transform.parent.gameObject;
         String id = marker.name.Substring(6);
         if (!id.Equals("Master"))
@@ -36,11 +36,12 @@ public class ContextMenu : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+       // cube = canvasTransform.transform.parent.transform.parent.FindChild("Pivot").gameObject;
         dims.x = cube.transform.localScale.x;
         dims.y = cube.transform.localScale.y;
         dims.z = cube.transform.localScale.z;
         floors = (int)dims.y;
-        contextMenu.transform.position = new Vector3(contextMenu.transform.position.x, cube.transform.localScale.y + 3, contextMenu.transform.position.z);
+      //  contextMenu.transform.position = new Vector3(contextMenu.transform.position.x, cube.transform.position.y + 3, contextMenu.transform.position.z);
         canvasTransform.transform.rotation = new Quaternion(canvasTransform.transform.rotation.x, cam.transform.rotation.y, canvasTransform.transform.rotation.z, 1.0f);
         textArea.text = "Building ID: \t" + buildingID + "\n" +
             "Living area: \t" + livingArea + " m²\n" +
