@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -83,9 +84,9 @@ public class TableCalibration : MonoBehaviour{
             // completed and load / unload corresponding scenes
             setupScene.calibrationDone(lowerLeft, upperRight);
 
-            // Write text file
-            string[] CalibPos = { " " + lowerLeft.x, " " + lowerLeft.y, " " + lowerLeft.z, " " + upperRight.x, " " + upperRight.y, " " + upperRight.z };
-            using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"C:\Users\projekt\Documents\AR2_Composer_Mono\Main\Assets\CalibPos.txt")){
+            // Write text file            
+            string[] CalibPos = { "" + lowerLeft.x, "" + lowerLeft.y, "" + lowerLeft.z, "" + upperRight.x, "" + upperRight.y, "" + upperRight.z };            
+            using (System.IO.StreamWriter file = new System.IO.StreamWriter(Application.dataPath + "/Resources/planeCalibData.txt")){
                 foreach (string line in CalibPos){
                     file.WriteLine(line);
                 }

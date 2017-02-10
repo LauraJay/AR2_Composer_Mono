@@ -43,6 +43,7 @@ public class ContextMenu : MonoBehaviour
         floors = (int)dims.y;
       //  contextMenu.transform.position = new Vector3(contextMenu.transform.position.x, cube.transform.position.y + 3, contextMenu.transform.position.z);
         canvasTransform.transform.rotation = new Quaternion(canvasTransform.transform.rotation.x, cam.transform.rotation.y, canvasTransform.transform.rotation.z, 1.0f);
+        livingArea = dims.y * dims.x * floors;
         textArea.text = "Building ID: \t" + buildingID + "\n" +
             "Living area: \t" + livingArea + " m²\n" +
             "Floors: \t\t\t" + floors + "\n" +

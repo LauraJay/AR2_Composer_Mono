@@ -2,6 +2,7 @@
 using System;
 using System.Collections;
 using UnityEngine.SceneManagement;
+using System.Text.RegularExpressions;
 
 public class setupScene : MonoBehaviour{
     private GameObject[] markerCubes;
@@ -55,9 +56,8 @@ public class setupScene : MonoBehaviour{
 
     public void noCalibration(){
         Debug.Log("No Calibration is done. Loading old information.");
-
-        string[] CalibData = System.IO.File.ReadAllLines(@"C:\Users\projekt\Documents\AR2_Composer_Mono\Main\Assets\CalibPos.txt");
-        if (CalibData.Length != 6){
+        string[] planeCalibDatText = System.IO.File.ReadAllLines(Application.dataPath + "/Resources/planeCalibData.txt");
+        if (planeCalibDatText.Length != 6){
             Debug.LogError("No calibration has been selected, but no valid text file has been read.");
             SceneManager.UnloadSceneAsync(SceneManager.GetSceneByName("firstmenu"));
             SceneManager.LoadScene("secondmenu", LoadSceneMode.Additive);
@@ -65,12 +65,12 @@ public class setupScene : MonoBehaviour{
         else{
             Vector3 lowerLeft = new Vector3();
             Vector3 upperRight = new Vector3();
-            lowerLeft.x = float.Parse(CalibData[0]);
-            lowerLeft.y = float.Parse(CalibData[1]);
-            lowerLeft.z = float.Parse(CalibData[2]);
-            upperRight.x = float.Parse(CalibData[3]);
-            upperRight.y = float.Parse(CalibData[4]);
-            upperRight.z = float.Parse(CalibData[5]);
+            lowerLeft.x = float.Parse(planeCalibDatText[0]);
+            lowerLeft.y = float.Parse(planeCalibDatText[1]);
+            lowerLeft.z = float.Parse(planeCalibDatText[2]);
+            upperRight.x = float.Parse(planeCalibDatText[3]);
+            upperRight.y = float.Parse(planeCalibDatText[4]);
+            upperRight.z = float.Parse(planeCalibDatText[5]);
 
             Debug.Log("[LOADING CALIBRATION DATA] lowerLeft: " + lowerLeft);
             Debug.Log("[LOADING CALIBRATION DATA] upperRight: " + upperRight);
@@ -103,21 +103,20 @@ public class setupScene : MonoBehaviour{
         table.transform.localScale = new Vector3(width / 10, 1, height / 10);
 
         GameObject tableMenue = GameObject.Find("TableMenuParent");
-        tableMenue.transform.parent = table.transform;
-
-        tableMenue.transform.position = new Vector3(position.x+width/2, position.y, position.z + height/2); 
+        //tableMenue.transform.parent = table.transform;
+        //tableMenue.transform.position = new Vector3(position.x+width/2, position.y, position.z + height/2); 
         
-
         calibDone = true;
     }
 
     void Start() {
         // Initialization
         calibDone = false;
-        tableCalib.enabled = false;
-        markerCubes = new GameObject[markersToRender];
+        tableCalib.enabled = false;        
         networkMarkersPrevFrame = new Marker[0];
-        markersToRender = networkData.getMarkersToReceive();
+        networkData = gameObject.GetComponent<readInNetworkData>();
+        markersToRender = networkData.getMarkersToReceive() + 1;
+        markerCubes = new GameObject[markersToRender];
 
         // Create parent object (plane and cubes are attached to this)
         parent = new GameObject();
@@ -133,8 +132,7 @@ public class setupScene : MonoBehaviour{
            // markerCubes[i].transform.FindChild("Pivot").transform.FindChild("Cube").GetComponent<Renderer>().material.color = new Color(0, 255, 0);
             markerCubes[i].transform.localScale = new Vector3(markerScale, markerScale, markerScale);
         }
-        MarkerMaster.SetActive(false);
-        networkData = gameObject.GetComponent<readInNetworkData>();
+        MarkerMaster.SetActive(false);        
     }
 
     // Set whether the marker array has been filled
@@ -165,6 +163,8 @@ public class setupScene : MonoBehaviour{
         if (markerArraySet){
             // Pull markers for current frame from readInNetworkData script
             networkMarkers = networkData.getMarkers();
+
+            Debug.Log("networkMarkers.Length: " + networkMarkers.Length);
 
             for (int i = 0; i < networkMarkers.Length; i++){
                 Marker cur = networkMarkers[i];

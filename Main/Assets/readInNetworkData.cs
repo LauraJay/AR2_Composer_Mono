@@ -109,16 +109,19 @@ public class readInNetworkData : MonoBehaviour {
     private void interpretTCPMarkerData(){
         for (int i = 0; i < readBufferLength; i += bytesPerMarker){
             int curID = System.BitConverter.ToInt32(readBuffer, i); // Convert the marker ID
-            if (curID == 0 && printMarkerDebugInfo)
+            if (curID == 0 && printMarkerDebugInfo){
                 Debug.Log("[READ IN NETWORK DATA] Start of frame " + frameCounter + ".");
+                continue;
+            }
             if (curID == -1) { // Marker is empty
                 markers[i / bytesPerMarker] = new Marker(-1, 0.0f, 0.0f, 0.0f, 0);
+                continue;
             }
             if (curID == -2){ // End of frame reached
                 if(printMarkerDebugInfo)
                     Debug.Log("[READ IN NETWORK DATA] Last marker reached, suspending loop for current frame.");
                 frameCounter++; // This is counted even if showMarkerDebugInfo is false, so that it can be enabled at any time
-                markers[i / bytesPerMarker + 1] = new Marker(-2, 0.0f, 0.0f, 0.0f, 0); // Set last marker as EOF (end of frame)
+                markers[i / bytesPerMarker] = new Marker(-2, 0.0f, 0.0f, 0.0f, 0); // Set last marker as EOF (end of frame)
                 break;                                                                 // and suspend loop
             }else if (curID < -2 || curID > markersToReceive){ // For debugging, this should not happen during normal operation
                 Debug.LogError("[READ IN NETWORK DATA] Marker ID not valid: " + curID);
